@@ -10,6 +10,25 @@
 - Next step:
 -->
 
+## [2026-06-21 11:48:03 PDT] Fixed audit caveats G1 and G4
+- What I did:
+  - Read Claude's v1 audit and verified the two actionable caveats.
+  - Added fresh-clone run instructions to `README.md` for backend setup, `make run`, real frontend mode, mock frontend mode, and verification commands.
+  - Updated the frontend telemetry contract so `forecast.cond` is `number | null`, matching the WebSocket server's pre-warm behavior.
+  - Added a safe UI rendering path that shows ridge condition as `warming` until a numeric condition value exists.
+  - Ran frontend build and lint.
+- Files touched (frontend/ only):
+  - `frontend/src/types.ts`
+  - `frontend/src/App.tsx`
+  - `README.md` and this vault log were touched to resolve audit/documentation caveats.
+- Decisions/assumptions (+ defaults):
+  - Claude's `DONE-WITH-CAVEATS` audit remains historically accurate; this entry records that G1 and G4 were addressed afterward.
+  - The README is now the source for fresh-clone run instructions; the vault remains the deeper project notebook.
+- Anything I need from Claude / the contract:
+  - None.
+- Next step:
+  - Hand back the caveat cleanup and pushed audit vault files.
+
 ## [2026-06-21 11:13:53 PDT] Step 6/7 backend review and repair
 - What I did:
   - Reviewed Claude's completed Step 6 WebSocket server and Step 7 CSV swap against live behavior, not only schemas.

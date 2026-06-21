@@ -70,7 +70,7 @@ export type TelemetryFrame = {
     predicted_demand_kw: number
     horizon_ticks: number
     actual_demand_kw: number
-    cond: number
+    cond: number | null
     reanchor_count: number
     warm: boolean
   }

@@ -222,6 +222,7 @@ function Dashboard() {
   const load = frame.nodes.LOAD_CAMPUS
   const feeder = frame.market.per_line_flow_kw.FEEDER_1 ?? 0
   const topAlert = frame.alerts[0]
+  const ridgeCondition = frame.forecast.cond === null ? 'warming' : frame.forecast.cond.toFixed(1)
   const demandSummary = `Actual demand ${kw(frame.forecast.actual_demand_kw)}. Forecast ${kw(frame.forecast.predicted_demand_kw)}.`
 
   return (
@@ -320,7 +321,7 @@ function Dashboard() {
           </section>
 
           <p className="connection-note" aria-live="polite">
-            Stream: {status} / {client.url}. {lastMessage}
+            Stream: {status} / {client.url}. Ridge condition: {ridgeCondition}. {lastMessage}
           </p>
         </aside>
       </main>
