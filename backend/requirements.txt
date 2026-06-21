@@ -1,0 +1,10 @@
+# Backend deps — pinned to versions that install cleanly on Intel macOS / Python 3.14.
+# numpy + scikit-learn are the only compiled deps; wheels confirmed available.
+# aiomqtt and paho-mqtt are pure Python (no wheel risk on 3.14).
+numpy>=2.2,<3
+scikit-learn>=1.7         # optional: used only for ridge re-anchor; numpy fallback exists
+paho-mqtt>=2.1,<3
+aiomqtt>=2.3,<3           # async wrapper over paho; pure Python
+websockets>=13
+PyYAML>=6
+pytest>=8                 # tests / per-step verification

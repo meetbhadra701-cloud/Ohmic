@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-20] Backend skeleton + deps + broker + MQTT smoke test (Step 0)
+- What I did: Created the `backend/` package skeleton, pinned `requirements.txt`, `config.yaml` with all labeled defaults, a repo-owned `mosquitto.conf`, and the Step-0 MQTT smoke test. Created a venv, installed deps on Python 3.14, brought up Mosquitto, and passed the smoke test (round-tripped one message).
+- Files touched (backend/ or CONTRACTS/ only): `backend/requirements.txt`, `backend/config.yaml`, `backend/mosquitto.conf`, `backend/sim/__init__.py`, `backend/sim/agents/__init__.py`, `backend/sim/physics/__init__.py`, `backend/scripts/smoke_mqtt.py`.
+- Decisions/assumptions (+ defaults): All deps install on Python 3.14 with cp314 wheels (numpy 2.4.6, scipy 1.18, scikit-learn 1.9.0, aiomqtt 2.5.1 pure-Python) — the 3.14 wheel risk did not materialize. Mosquitto 2.1.2 ships no default `mosquitto.conf` (only `.example`), so the brew service errored; fixed by installing a minimal localhost-only config (`listener 1883 localhost`, `allow_anonymous true` — safe for single-machine sim). Config defaults per `config.yaml` (line FEEDER_1 rating 80 kW < load peak 120 kW so curtailment will trigger).
+- Open questions / risks for the human: `allow_anonymous true` is fine for a localhost sim but should never be used if the broker is ever exposed beyond localhost. The brew service config lives at `/usr/local/etc/mosquitto/mosquitto.conf` (copied from the repo) — re-copy if you change the repo version.
+- Next step: Step 1 — clock + bus + dummy nodes; `scripts/check_tick.py` asserts monotonic ticks.
+
 ## [2026-06-20] CONTRACTS published v1
 - What I did: Authored the three contract files that Codex (frontend) was blocked on, and added the HTTPS git remote (SSH currently fails with publickey).
 - Files touched (backend/ or CONTRACTS/ only): `CONTRACTS/mqtt_topics.md`, `CONTRACTS/message_schemas.md`, `CONTRACTS/websocket_api.md`.

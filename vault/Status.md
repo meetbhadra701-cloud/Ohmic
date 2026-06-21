@@ -4,7 +4,7 @@ _Claude updates this after each build step. Human reads it first._
 
 ## Build steps (backend §6 / frontend §5)
 - [x] CONTRACTS published (Claude — blocks Codex until done) — v1, 2026-06-20
-- [ ] Backend skeleton + MQTT smoke test
+- [x] Backend skeleton + MQTT smoke test — 2026-06-20, smoke test green
 - [ ] Clock + bus + dummy nodes
 - [ ] Physical models (solar/load, synthetic)
 - [ ] Math: degradation cost, recursive ridge (+guards), CDA + feasibility
@@ -22,4 +22,4 @@ _Claude updates this after each build step. Human reads it first._
 - (none) — Codex was blocked on `CONTRACTS/websocket_api.md`; now published.
 
 ## In progress
-- Step 0.5: backend skeleton + deps + Mosquitto + MQTT smoke test.
+- Step 1: clock + bus + dummy nodes (prove tick sync + pub/sub plumbing).
