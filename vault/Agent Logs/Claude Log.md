@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-20] Clock + bus + dummy nodes (Step 1)
+- What I did: Built the core plumbing — `config.py` (YAML loader), `bus.py` (the single aiomqtt+JSON seam; stamps schema_version/ts; skips malformed messages; `FakeBus`-swappable interface), `clock.py` (publishes `grid/tick` with sim_time/day_phase; monotonic tick is the only clock), `agents/base.py` (common async agent shape, dispatch by topic), `agents/dummy.py` (fixed-state node). `check_tick.py` runs clock + 2 dummy nodes + verifier and passed (20 contiguous ticks, both nodes publishing state).
+- Files touched (backend/ only): `backend/sim/config.py`, `backend/sim/bus.py`, `backend/sim/clock.py`, `backend/sim/agents/base.py`, `backend/sim/agents/dummy.py`, `backend/scripts/check_tick.py`.
+- Decisions/assumptions (+ defaults): Each agent owns its own Bus/connection (broker = bus; no direct agent calls). Agents edge-trigger on `grid/tick` (deterministic, pausable). aiomqtt `identifier=` is the 2.x client-id kwarg.
+- Open questions / risks for the human: none.
+- Next step: Step 2 — synthetic solar irradiance curve + load demand profile (critical/non-critical split), pytest (no broker).
+
 ## [2026-06-20] Backend skeleton + deps + broker + MQTT smoke test (Step 0)
 - What I did: Created the `backend/` package skeleton, pinned `requirements.txt`, `config.yaml` with all labeled defaults, a repo-owned `mosquitto.conf`, and the Step-0 MQTT smoke test. Created a venv, installed deps on Python 3.14, brought up Mosquitto, and passed the smoke test (round-tripped one message).
 - Files touched (backend/ or CONTRACTS/ only): `backend/requirements.txt`, `backend/config.yaml`, `backend/mosquitto.conf`, `backend/sim/__init__.py`, `backend/sim/agents/__init__.py`, `backend/sim/physics/__init__.py`, `backend/scripts/smoke_mqtt.py`.
