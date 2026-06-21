@@ -1,14 +1,17 @@
-"""Synthetic physical-model curves (pure, deterministic, numpy-only).
+"""Physical-model curves for solar generation and load demand.
 
-Step 2 uses these for solar generation and load demand. Step 7 swaps a CSV reader
-behind the SAME signatures, so the agents never change. No MQTT, no asyncio.
+Step 2: synthetic bell curves (pure, no state).
+Step 7: call ``load_csv_profiles(solar_csv, load_csv)`` once before the sim
+starts to swap in CSV-backed interpolation — the function signatures below are
+UNCHANGED so no agent code needs to be touched.
 
-Conventions: `day_phase` is 0.0-1.0 through the sim day (0.0/1.0 = midnight,
+Conventions: ``day_phase`` is 0.0–1.0 through the sim day (0.0/1.0 = midnight,
 0.5 = noon). All power in kW, generation >= 0, demand >= 0.
 """
 from __future__ import annotations
 
 import math
+import pathlib
 
 import numpy as np
 
@@ -16,15 +19,55 @@ import numpy as np
 _DAWN = 0.25
 _DUSK = 0.75
 
+# CSV-backed override state (None = use synthetic formulas).
+# Each array has shape (N,) with rows sorted by day_phase.
+_csv_solar_phase: np.ndarray | None = None   # day_phase column
+_csv_solar_frac: np.ndarray | None = None    # output_fraction column
+_csv_load_phase: np.ndarray | None = None    # day_phase column
+_csv_load_frac: np.ndarray | None = None     # load_fraction column (scaled by config)
+
+
+def load_csv_profiles(
+    solar_csv: str | pathlib.Path,
+    load_csv: str | pathlib.Path,
+) -> None:
+    """Load CSV-backed profiles (call once before starting the sim).
+
+    solar_csv must have columns: day_phase, output_fraction (0–1).
+    load_csv  must have columns: day_phase, load_fraction  (0–1).
+
+    When loaded, ``solar_output_kw`` interpolates output_fraction and scales by
+    inverter_kw; ``load_demand_kw`` interpolates load_fraction and scales by
+    (peak_kw - base_kw) + base_kw, then adds optional noise — exactly as the
+    synthetic formula does, so agent config knobs still work.
+    """
+    global _csv_solar_phase, _csv_solar_frac, _csv_load_phase, _csv_load_frac
+    s = np.loadtxt(solar_csv, delimiter=",", skiprows=1)
+    l_ = np.loadtxt(load_csv, delimiter=",", skiprows=1)
+    _csv_solar_phase, _csv_solar_frac = s[:, 0], s[:, 1]
+    _csv_load_phase, _csv_load_frac = l_[:, 0], l_[:, 1]
+
+
+def reset_csv_profiles() -> None:
+    """Clear CSV state (used in tests to restore synthetic behaviour)."""
+    global _csv_solar_phase, _csv_solar_frac, _csv_load_phase, _csv_load_frac
+    _csv_solar_phase = _csv_solar_frac = _csv_load_phase = _csv_load_frac = None
+
 
 def solar_output_kw(day_phase: float, inverter_kw: float) -> float:
-    """Deterministic solar generation from a time-of-day bell curve, capped by the
-    inverter limit. Zero outside the daylight window; peak (== inverter_kw) at noon.
+    """Solar generation capped by the inverter limit.
+
+    Synthetic: deterministic sin bell over the daylight window.
+    CSV-backed: interpolates output_fraction from the loaded CSV.
     """
+    if _csv_solar_phase is not None:
+        frac = float(np.interp(day_phase, _csv_solar_phase, _csv_solar_frac))
+        return float(min(max(frac * inverter_kw, 0.0), inverter_kw))
+    # Synthetic fallback.
     if not (_DAWN <= day_phase <= _DUSK):
         return 0.0
-    x = (day_phase - _DAWN) / (_DUSK - _DAWN)   # 0..1 across daylight
-    out = inverter_kw * math.sin(math.pi * x)   # 0 at dawn/dusk, peak at noon
+    x = (day_phase - _DAWN) / (_DUSK - _DAWN)
+    out = inverter_kw * math.sin(math.pi * x)
     return float(min(max(out, 0.0), inverter_kw))
 
 
@@ -35,14 +78,19 @@ def load_demand_kw(
     noise_kw: float = 0.0,
     rng: np.random.Generator | None = None,
 ) -> float:
-    """Daily load profile with morning + evening peaks over a flat base.
+    """Daily load profile.
 
-    `noise_kw` adds zero-mean Gaussian jitter (std = noise_kw) using `rng` if given
-    (pass a seeded Generator for reproducible tests). Result is clamped to >= 0.
+    Synthetic: morning + evening Gaussian peaks over a flat base.
+    CSV-backed: interpolates load_fraction and scales by (peak_kw - base_kw),
+                then adds base_kw and optional Gaussian noise — same scaling
+                semantics as the synthetic version.
     """
-    morning = math.exp(-(((day_phase - 0.33) / 0.08) ** 2))
-    evening = math.exp(-(((day_phase - 0.79) / 0.10) ** 2))
-    shape = max(morning, evening)               # 0..1
+    if _csv_load_phase is not None:
+        shape = float(np.interp(day_phase, _csv_load_phase, _csv_load_frac))
+    else:
+        morning = math.exp(-(((day_phase - 0.33) / 0.08) ** 2))
+        evening = math.exp(-(((day_phase - 0.79) / 0.10) ** 2))
+        shape = max(morning, evening)
     demand = base_kw + (peak_kw - base_kw) * shape
     if noise_kw and rng is not None:
         demand += float(rng.normal(0.0, noise_kw))

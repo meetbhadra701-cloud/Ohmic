@@ -48,3 +48,10 @@ chaos:
   kill_tick: 200            # auto-kill solar at this tick (0 = manual only)
   revive_tick: 260          # auto-restore at this tick (0 = manual only)
   target: PV_01
+
+profiles:
+  # source: "synthetic" uses the built-in formula curves (default; no CSV needed).
+  # source: "csv"       loads the two CSV files below before the sim starts.
+  source: csv
+  solar_csv: backend/data/solar_day.csv
+  load_csv:  backend/data/load_day.csv

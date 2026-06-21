@@ -11,7 +11,7 @@ _Claude updates this after each build step. Human reads it first._
 - [x] Market loop steady-state — 2026-06-20, check_market green (trades + curtailment + energy conservation, stable across runs)
 - [x] Self-healing protocol — 2026-06-20, check_heal green (kill -> CRITICAL -> shed + grid-forming -> ALL_CLEAR -> market), stable across runs
 - [x] WebSocket server (integration seam) — 2026-06-21, check_ws green (30 frames, all fields contract-compliant)
-- [ ] Real-data CSV swap
+- [x] Real-data CSV swap — 2026-06-21, CSV profiles behind same signatures, all gates unchanged
 - [ ] Frontend scaffold + mock stream
 - [ ] 3D scene + data binding + flow lines
 - [ ] Panels + alerts banner
@@ -22,4 +22,4 @@ _Claude updates this after each build step. Human reads it first._
 - (none) — Codex was blocked on `CONTRACTS/websocket_api.md`; now published.
 
 ## In progress
-- Step 7: Real-data CSV swap — load CSV (weather + load) behind the same profiles.py interface.
+- Frontend steps (Codex): scaffold + mock stream, 3D scene, panels, Kill-Solar control.
