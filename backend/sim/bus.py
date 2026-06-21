@@ -25,6 +25,7 @@ class Message:
     """A decoded inbound message: its topic and parsed JSON payload."""
     topic: str
     payload: dict
+    retain: bool = False    # True if the broker delivered this as a retained message
 
 
 class Bus:
@@ -67,4 +68,4 @@ class Bus:
                 continue
             if not isinstance(payload, dict):
                 continue
-            yield Message(topic=str(msg.topic), payload=payload)
+            yield Message(topic=str(msg.topic), payload=payload, retain=bool(msg.retain))

@@ -8,6 +8,7 @@ from .agents.grid_operator import GridOperatorAgent
 from .agents.load import LoadAgent
 from .agents.solar import SolarAgent
 from .bus import Bus
+from .chaos import ChaosAgent
 from .clock import Clock
 
 
@@ -25,5 +26,6 @@ def build_sim(cfg: dict, log: Callable[[str], None] | None = None,
         BatteryAgent(make_bus(cfg, "battery"), cfg),
         LoadAgent(make_bus(cfg, "load"), cfg, log=log),
         GridOperatorAgent(make_bus(cfg, "operator"), cfg, log=log),
+        ChaosAgent(make_bus(cfg, "chaos"), cfg),
     ]
     return clock, agents

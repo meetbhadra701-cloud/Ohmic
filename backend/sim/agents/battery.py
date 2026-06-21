@@ -32,13 +32,16 @@ class BatteryAgent(BaseAgent):
         self.max_power_kw = node["max_power_kw"]
         self.dt_h = 24.0 / cfg["sim"]["ticks_per_day"]
         self.deg = DegradationParams.from_config(cfg)
+        self.floor_price = float(cfg["degradation"]["floor_price"])
+        self.load_id = cfg["nodes"]["load"]["id"]
         self.mode = "market"            # "market" | "grid_forming"
         self.flow_kw = 0.0
         self.unmet_kw = 0.0
+        self.last_critical_kw = 0.0
         self.last_ask_price: float | None = None
 
     def subscriptions(self) -> list[str]:
-        return [TOPIC_TICK, TOPIC_CLEARING, TOPIC_ALERT]
+        return [TOPIC_TICK, TOPIC_CLEARING, TOPIC_ALERT, f"node/{self.load_id}/state"]
 
     def _energy_to_soc(self, kw: float) -> float:
         return (kw * self.dt_h) / self.capacity_kwh
@@ -57,16 +60,32 @@ class BatteryAgent(BaseAgent):
     async def on_message(self, msg):
         if msg.topic == TOPIC_CLEARING:
             await self._on_clearing(msg.payload)
+        elif msg.topic.endswith("/state") and msg.payload.get("node_id") == self.load_id:
+            self.last_critical_kw = msg.payload.get("critical_kw", self.last_critical_kw)
         else:
             await super().on_message(msg)
 
     async def on_tick(self, tick: dict) -> None:
         t = tick["tick"]
-        await self.bus.publish(f"node/{self.node_id}/heartbeat", {"tick": t, "node_id": self.node_id})
+        await self.bus.publish(f"node/{self.node_id}/heartbeat", {"tick": t, "node_id": self.node_id}, qos=1)
         self.last_ask_price = None
         if self.mode == "market":
             await self._participate(t)
+        else:
+            await self._grid_form(t)
         await self._publish_state(t)
+
+    async def _grid_form(self, t: int) -> None:
+        """Emergency grid-forming: ignore degradation economics, dump available
+        discharge to the critical load at the price floor (must-serve)."""
+        vol = self._dischargeable_kw()
+        if vol > 1e-6:
+            await self.bus.publish(
+                "market/asks",
+                {"tick": t, "agent_id": self.node_id, "intent": "sell",
+                 "volume_kw": vol, "min_price_usd_kwh": self.floor_price},
+                qos=0,
+            )
 
     async def _participate(self, t: int) -> None:
         if self.soc < TARGET_SOC - SOC_DEADBAND:               # charge
@@ -97,6 +116,8 @@ class BatteryAgent(BaseAgent):
         charged = sum(m["kw"] for m in matches if m["buyer"] == self.node_id)
         self.soc = min(1.0, max(0.0, self.soc + self._energy_to_soc(charged - discharged)))
         self.flow_kw = discharged - charged                    # + discharge, - charge
+        # Grid-forming: report the critical load we could not cover (SoC floor reached).
+        self.unmet_kw = max(0.0, self.last_critical_kw - discharged) if self.mode == "grid_forming" else 0.0
 
     async def _publish_state(self, t: int) -> None:
         await self.bus.publish(

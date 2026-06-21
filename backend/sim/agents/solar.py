@@ -37,7 +37,7 @@ class SolarAgent(BaseAgent):
             return  # dead: no heartbeat, no state, no ask -> operator will detect loss
         t = tick["tick"]
         self.output_kw = solar_output_kw(tick["day_phase"], self.inverter_kw)
-        await self.bus.publish(f"node/{self.node_id}/heartbeat", {"tick": t, "node_id": self.node_id})
+        await self.bus.publish(f"node/{self.node_id}/heartbeat", {"tick": t, "node_id": self.node_id}, qos=1)
         await self.bus.publish(
             f"node/{self.node_id}/state",
             {"tick": t, "node_id": self.node_id, "type": "solar",

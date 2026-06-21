@@ -34,6 +34,7 @@ class GridOperatorAgent(BaseAgent):
         self.beats: dict[int, set[str]] = {}
         self.missed: dict[str, int] = {n: 0 for n in self.monitored}
         self.good: dict[str, int] = {n: 0 for n in self.monitored}
+        self.first_seen: dict[str, int] = {}  # tick a node first beat; don't fault before it
         self.state = "NORMAL"            # "NORMAL" | "CRITICAL"
 
     def subscriptions(self) -> list[str]:
@@ -45,7 +46,9 @@ class GridOperatorAgent(BaseAgent):
         elif msg.topic == TOPIC_ASKS:
             self._record(msg.payload, "asks", Order(msg.payload["agent_id"], msg.payload["min_price_usd_kwh"], msg.payload["volume_kw"]))
         elif msg.topic.endswith("/heartbeat"):
-            self.beats.setdefault(msg.payload["tick"], set()).add(msg.payload["node_id"])
+            nid, btick = msg.payload["node_id"], msg.payload["tick"]
+            self.beats.setdefault(btick, set()).add(nid)
+            self.first_seen.setdefault(nid, btick)
         else:
             await super().on_message(msg)
 
@@ -53,17 +56,20 @@ class GridOperatorAgent(BaseAgent):
         self.orders.setdefault(payload["tick"], {"bids": [], "asks": []})[side].append(order)
 
     SETTLE_GRACE = 2                      # ticks of slack so every order has arrived
+    HEARTBEAT_GRACE = 4                   # larger slack for liveness (beats must not be falsely missed)
 
     async def on_tick(self, tick: dict) -> None:
         t = tick["tick"]
         settle = t - self.SETTLE_GRACE    # clear a fully-collected book
         if settle >= 0:
             await self._settle(settle)
-            await self._detect_faults(settle, t)
-        # housekeeping: drop buckets older than the just-settled tick
+        hb = t - self.HEARTBEAT_GRACE      # evaluate liveness with extra slack
+        if hb >= 0:
+            await self._detect_faults(hb, t)
+        # housekeeping: drop buckets we no longer need
         for old in [k for k in self.orders if k < settle]:
             self.orders.pop(old, None)
-        for old in [k for k in self.beats if k < settle]:
+        for old in [k for k in self.beats if k < hb]:
             self.beats.pop(old, None)
 
     async def _settle(self, settle: int) -> None:
@@ -89,6 +95,8 @@ class GridOperatorAgent(BaseAgent):
 
     async def _detect_faults(self, settle: int, now: int) -> None:
         for node in self.monitored:
+            if node not in self.first_seen or settle <= self.first_seen[node]:
+                continue                  # not yet alive at this tick — startup, not a fault
             present = node in self.beats.get(settle, set())
             if present:
                 self.missed[node] = 0

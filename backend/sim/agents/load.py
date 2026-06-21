@@ -74,7 +74,7 @@ class LoadAgent(BaseAgent):
     async def on_tick(self, tick: dict) -> None:
         t = tick["tick"]
         phase = tick["day_phase"]
-        await self.bus.publish(f"node/{self.node_id}/heartbeat", {"tick": t, "node_id": self.node_id})
+        await self.bus.publish(f"node/{self.node_id}/heartbeat", {"tick": t, "node_id": self.node_id}, qos=1)
 
         actual = load_demand_kw(phase, self.base_kw, self.peak_kw, self.noise_kw, self.rng)
         self.demand_kw = actual

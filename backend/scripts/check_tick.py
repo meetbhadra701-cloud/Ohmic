@@ -63,7 +63,9 @@ async def main() -> int:
     # Assertions
     distinct = sorted(set(ticks_seen))
     assert distinct == sorted(ticks_seen), f"duplicate ticks: {ticks_seen}"
-    assert distinct[0] == 0, f"ticks did not start at 0: {distinct[:3]}"
+    # The verifier may connect after tick 0 is published (grid/tick isn't retained);
+    # what matters is that ticks are monotonic and contiguous from where we joined.
+    assert distinct[0] <= 3, f"ticks started unexpectedly late: {distinct[:3]}"
     assert distinct == list(range(distinct[0], distinct[-1] + 1)), f"ticks not contiguous: {distinct}"
     assert len(distinct) >= EXPECT_TICKS, f"saw only {len(distinct)} ticks"
     for node in ("PV_01", "BESS_01"):

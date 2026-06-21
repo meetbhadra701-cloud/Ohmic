@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-20] Self-healing protocol (Step 5)
+- What I did: Added `chaos.py` (kills/restores solar on schedule or via WS command), battery grid-forming behavior (dumps available discharge to the critical load at the price floor, reports `unmet_kw` against the load's critical demand), and made the operator's fault detection robust. `check_heal.py` asserts the full transcript and passes deterministically across runs: kill@26 → CRITICAL@~33 → load sheds non-critical + battery grid-forming → ALL_CLEAR@~49 → back to market. All 34 unit tests + tick/market gates still green.
+- Files touched (backend/ only): `backend/sim/chaos.py`, `backend/sim/runner.py`, `backend/sim/agents/{battery,solar,load,grid_operator,base}.py`, `backend/sim/bus.py` (Message.retain), `backend/scripts/check_heal.py`, `backend/scripts/check_tick.py` (relaxed start assertion).
+- Decisions/assumptions (+ defaults): See `vault/Decisions/0003-heartbeat-and-retain-robustness.md` — heartbeats QoS 1; fault-detection grace 4 ticks (vs market settle 2); no fault before a node's first heartbeat; agents/checks ignore retained frames to avoid cross-run contamination.
+- Open questions / risks for the human: none — protocol is stable. The graces are tuned for fast test cadence and are conservative at the realistic 1 s tick.
+- Next step: Step 6 — WebSocket server broadcasting the per-tick superset frame (the integration seam for Codex's frontend).
+
 ## [2026-06-20] Market loop — real agents, steady-state (Step 4)
 - What I did: Built the four real agents (`solar.py`, `battery.py`, `load.py`, `grid_operator.py`), a `runner.py` to wire the sim, and `check_market.py`. The operator clears the CDA + feasibility and publishes `market/clearing` each settled tick. `check_market` passes deterministically (trades + curtailment + energy conservation, all line flows ≤ rating, stable over repeated runs). All 34 unit tests still green.
 - Files touched (backend/ only): `backend/sim/agents/{solar,battery,load,grid_operator}.py`, `backend/sim/runner.py`, `backend/scripts/check_market.py`, `backend/sim/physics/network.py` (additive per-match breakdown), `backend/config.yaml`, `backend/sim/physics/{degradation,recursive_ridge}.py` (float casts).
