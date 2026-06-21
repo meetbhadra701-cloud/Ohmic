@@ -2,12 +2,29 @@
 
 _Claude updates this after each build step. Human reads it first._
 
-## v1 Audit verdict — 2026-06-21: **DONE-WITH-CAVEATS**
+## v1 E2E Browser Demo verdict — 2026-06-21: **PASS-WITH-CAVEATS**
+Operated the real running system in a real browser (Claude in Chrome). **3D scene
+renders correctly — the prior "pixels unverified" unknown is now RESOLVED.** Rendered
+numbers match the live WS stream tick-for-tick (3 exact cross-checks). Kill-Solar
+self-heal arc observed live end-to-end with scene + numbers moving together
+(CRITICAL → shed → grid-forming → SoC floor → honest unmet → ALL_CLEAR → market).
+Ridge re-anchor fired live (cond 37M→346); battery floor + honest unmet confirmed.
+Full report: `Decisions/2026-06-21-e2e-browser-demo-audit.md`.
+**Demo-polish defects to fix:**
+- D1 [HIGH] alert-banner TEXT stays "NORMAL…" during CRITICAL (alerts[] is a 1-tick
+  transient; banner should read `frame.mode`).
+- D2 [MED] rapid Kill clicks drop the command (single clicks fine).
+- D3 [MED] browser Kill/Restore lands ~15-18 ticks slower than a direct WS client
+  (frontend send delay; backend chaos handling is fast).
+- D4 [MED] no WS auto-reconnect — after a backend hiccup the dashboard is stuck on
+  "Waiting for the first telemetry frame…" until manual reload (`stream.ts` has no
+  retry). Honest (not a zombie), but no recovery.
+
+## v1 Verification Audit — 2026-06-21: **DONE-WITH-CAVEATS**
 Full slice runs live (real broker + WS); self-heal arc proven through the real
 Kill-Solar WebSocket path; 46/46 tests, all 5 gates green; math + contract real.
 Caveats are docs/polish only — see `Decisions/2026-06-21-v1-verification-audit.md`.
-Top fix: add run instructions to `README.md` (G1). Visual 3D render still needs a
-manual eyes-on pass on the stronger Mac (frontend builds clean; pixels unverified).
+Top fix: add run instructions to `README.md` (G1).
 
 ## Build steps (backend §6 / frontend §5)
 - [x] CONTRACTS published (Claude — blocks Codex until done) — v1, 2026-06-20

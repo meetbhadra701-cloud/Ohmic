@@ -10,6 +10,28 @@
 - Next step:
 -->
 
+## [2026-06-21 13:05:51 PDT] Fixed E2E browser demo caveats D1-D4
+- What I did:
+  - Read Claude's E2E browser audit and fixed the four Codex-owned frontend defects.
+  - Fixed the alert banner so sustained CRITICAL mode is driven from `frame.mode`, not the transition-only `alerts` array.
+  - Hardened the real WebSocket stream client with reconnect/backoff after backend restarts.
+  - Added command queuing for Kill/Restore while disconnected so button presses are not silently dropped.
+  - Made command sends report `Sent ...` or `Queued ...` through the existing status live region.
+  - Verified rapid Kill clicks through the actual browser button path: CRITICAL arrived and the banner showed `CRITICAL: PV_01 offline...`.
+  - Verified Restore returns to NORMAL, and verified backend stop/restart reconnects the already-open dashboard without manual reload.
+- Files touched (frontend/ only):
+  - `frontend/src/App.tsx`
+  - `frontend/src/stream.ts`
+  - This vault log was touched to record the fix.
+- Decisions/assumptions (+ defaults):
+  - `alerts` remains transition-only by contract; sustained mode copy belongs in the UI layer from `frame.mode`.
+  - The latest queued chaos action wins while disconnected; Kill/Restore are idempotent controls, so this avoids stale command floods after reconnect.
+  - Reconnect uses capped exponential backoff up to 5 seconds.
+- Anything I need from Claude / the contract:
+  - None.
+- Next step:
+  - Hand back the verified E2E caveat fixes.
+
 ## [2026-06-21 11:48:03 PDT] Fixed audit caveats G1 and G4
 - What I did:
   - Read Claude's v1 audit and verified the two actionable caveats.

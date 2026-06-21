@@ -223,6 +223,14 @@ function Dashboard() {
   const feeder = frame.market.per_line_flow_kw.FEEDER_1 ?? 0
   const topAlert = frame.alerts[0]
   const ridgeCondition = frame.forecast.cond === null ? 'warming' : frame.forecast.cond.toFixed(1)
+  const alertMessage =
+    frame.mode === 'CRITICAL'
+      ? topAlert
+        ? `${topAlert.level}: ${topAlert.detail}`
+        : `CRITICAL: ${solar.alive ? 'Solar heartbeat missing' : 'PV_01 offline'}; battery ${battery.mode}; ${kw(load.shed_kw)} shed`
+      : topAlert?.level === 'ALL_CLEAR'
+        ? `${topAlert.level}: ${topAlert.detail}`
+        : 'NORMAL: Market and physical constraints are steady'
   const demandSummary = `Actual demand ${kw(frame.forecast.actual_demand_kw)}. Forecast ${kw(frame.forecast.predicted_demand_kw)}.`
 
   return (
@@ -246,7 +254,7 @@ function Dashboard() {
           <MicrogridScene frame={frame} lowPower={lowPower} />
           <div className={`alert-banner ${frame.mode.toLowerCase()}`} role="status" aria-live="polite">
             <CircleAlert aria-hidden="true" size={20} />
-            <span>{topAlert ? `${topAlert.level}: ${topAlert.detail}` : 'NORMAL: Market and physical constraints are steady'}</span>
+            <span>{alertMessage}</span>
           </div>
         </section>
 
