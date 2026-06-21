@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 _MQTT_SUBS_QOS0 = ["grid/tick"]
 _MQTT_SUBS_QOS1 = ["node/+/state", "market/clearing", "grid/alert"]
 
-KNOWN_NODES = {"PV_01", "BESS_01", "LOAD_CAMPUS"}
+CHAOS_TARGETS = {"PV_01"}
 KNOWN_ACTIONS = {"kill", "restore"}
 
 
@@ -155,6 +155,12 @@ class WebSocketServer:
             },
         }
 
+        if self._alert_level == "CRITICAL" and batt.get("mode") == "grid_forming":
+            emergency_served = min(load.get("critical_kw", 0.0), max(0.0, batt.get("flow_kw", 0.0)))
+            nodes[load_id]["served_kw"] = emergency_served
+            nodes[load_id]["shed_kw"] = max(0.0, load.get("demand_kw", 0.0) - emergency_served)
+            nodes[load_id]["health"] = "degraded" if nodes[load_id]["shed_kw"] > 0.0 else nodes[load_id]["health"]
+
         cl = self._clearing
         flows = [
             {
@@ -223,7 +229,11 @@ class WebSocketServer:
             return
         target = cmd.get("target")
         action = cmd.get("action")
-        if target not in KNOWN_NODES or action not in KNOWN_ACTIONS:
+        if target not in CHAOS_TARGETS or action not in KNOWN_ACTIONS:
             log.warning("Ignored invalid chaos command: %r", cmd)
             return
-        await self._bus.publish("chaos/command", {"target": target, "action": action}, qos=1)
+        await self._bus.publish(
+            "chaos/command",
+            {"tick": self._tick_payload.get("tick", 0), "target": target, "action": action},
+            qos=1,
+        )

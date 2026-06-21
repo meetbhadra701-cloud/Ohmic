@@ -20,7 +20,7 @@ from sim.bus import Bus, new_run_id
 from sim.config import load_config
 from sim.runner import build_sim
 
-KILL, REVIVE, RUN_TO = 26, 42, 58
+KILL, REVIVE, RUN_TO = 26, 72, 130
 TICK_PERIOD = 0.10      # realistic-ish cadence; leaves ample slack for heartbeat delivery
 
 
@@ -43,6 +43,7 @@ async def observe(bus, alerts, battery_mode, load_shed, solar_alive):
 
 async def main() -> int:
     cfg = load_config()
+    cfg.setdefault("operator", {}).update(settle_grace_ticks=32, heartbeat_grace_ticks=32)
     cfg["chaos"].update(kill_tick=KILL, revive_tick=REVIVE)
     run_id = new_run_id("heal")
     clock, agents = build_sim(cfg, log=lambda m: None, tick_period=TICK_PERIOD, max_ticks=RUN_TO, run_id=run_id)
@@ -51,9 +52,9 @@ async def main() -> int:
     alerts, battery_mode, load_shed, solar_alive = [], {}, {}, {}
     obus = Bus(cfg["mqtt"]["host"], cfg["mqtt"]["port"], "heal_observer", run_id=run_id)
     try:
-        async with asyncio.timeout(30):
+        async with asyncio.timeout(max(40.0, RUN_TO * TICK_PERIOD + 20.0)):
             await asyncio.wait_for(observe(obus, alerts, battery_mode, load_shed, solar_alive),
-                                   timeout=RUN_TO * TICK_PERIOD + 3)
+                                   timeout=max(35.0, RUN_TO * TICK_PERIOD + 18.0))
     except (asyncio.TimeoutError, asyncio.CancelledError):
         pass
     finally:

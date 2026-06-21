@@ -44,6 +44,10 @@ heartbeat:
   miss_threshold: 3         # missed heartbeats before CRITICAL
   clear_consecutive: 2      # consecutive good beats to clear (anti-flap)
 
+operator:
+  settle_grace_ticks: 8     # ticks of slack before clearing a book; scripts raise this for fast gates
+  heartbeat_grace_ticks: 8  # ticks of slack before evaluating heartbeat liveness
+
 chaos:
   kill_tick: 200            # auto-kill solar at this tick (0 = manual only)
   revive_tick: 260          # auto-restore at this tick (0 = manual only)

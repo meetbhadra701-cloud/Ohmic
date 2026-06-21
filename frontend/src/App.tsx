@@ -306,7 +306,7 @@ function Dashboard() {
             <dl>
               <div>
                 <dt><RadioTower aria-hidden="true" size={16} /> FEEDER_1</dt>
-                <dd>{kw(feeder)} / 80.0 kW</dd>
+                <dd>{kw(feeder)} live flow</dd>
               </div>
               <div>
                 <dt><Zap aria-hidden="true" size={16} /> Curtailed</dt>

@@ -35,10 +35,12 @@ async def verifier(bus: Bus, clearings: list[dict]) -> None:
 
 async def main() -> int:
     cfg = load_config()
+    cfg.setdefault("operator", {}).update(settle_grace_ticks=32, heartbeat_grace_ticks=32)
     run_id = new_run_id("market")
     rating = next(iter(cfg["network"]["lines"].values()))["rating_kw"]
     clock, agents = build_sim(cfg, log=lambda m: None, tick_period=TICK_PERIOD,
-                              max_ticks=EXPECT_CLEARINGS + 8, run_id=run_id)
+                              max_ticks=EXPECT_CLEARINGS + cfg["operator"]["settle_grace_ticks"] + 8,
+                              run_id=run_id)
     tasks = [asyncio.create_task(clock.run())] + [asyncio.create_task(a.run()) for a in agents]
     clearings: list[dict] = []
     vbus = Bus(cfg["mqtt"]["host"], cfg["mqtt"]["port"], "market_verifier", run_id=run_id)

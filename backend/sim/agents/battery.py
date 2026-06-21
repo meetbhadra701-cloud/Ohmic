@@ -39,6 +39,7 @@ class BatteryAgent(BaseAgent):
         self.unmet_kw = 0.0
         self.last_critical_kw = 0.0
         self.last_ask_price: float | None = None
+        self.pending_market_sells: dict[int, float] = {}
 
     def subscriptions(self) -> list[str]:
         return [TOPIC_TICK, TOPIC_CLEARING, TOPIC_ALERT, f"node/{self.load_id}/state"]
@@ -49,6 +50,12 @@ class BatteryAgent(BaseAgent):
     def _dischargeable_kw(self) -> float:
         energy_above_floor = max(0.0, (self.soc - self.soc_floor) * self.capacity_kwh)
         return min(self.max_power_kw, energy_above_floor / self.dt_h)
+
+    def _market_dischargeable_kw(self) -> float:
+        """Normal market offers preserve the emergency reserve around TARGET_SOC."""
+        energy_above_target = max(0.0, (self.soc - TARGET_SOC) * self.capacity_kwh)
+        already_offered = sum(self.pending_market_sells.values())
+        return min(self.max_power_kw, max(0.0, energy_above_target / self.dt_h - already_offered))
 
     def _chargeable_kw(self) -> float:
         room = max(0.0, (1.0 - self.soc) * self.capacity_kwh)
@@ -76,16 +83,12 @@ class BatteryAgent(BaseAgent):
         await self._publish_state(t)
 
     async def _grid_form(self, t: int) -> None:
-        """Emergency grid-forming: ignore degradation economics, dump available
-        discharge to the critical load at the price floor (must-serve)."""
-        vol = self._dischargeable_kw()
+        """Emergency grid-forming bypasses the market and serves critical load."""
+        vol = min(self._dischargeable_kw(), self.last_critical_kw)
+        self.flow_kw = vol
+        self.unmet_kw = max(0.0, self.last_critical_kw - vol)
         if vol > 1e-6:
-            await self.bus.publish(
-                "market/asks",
-                {"tick": t, "agent_id": self.node_id, "intent": "sell",
-                 "volume_kw": vol, "min_price_usd_kwh": self.floor_price},
-                qos=1,
-            )
+            self.soc = max(self.soc_floor, self.soc - self._energy_to_soc(vol))
 
     async def _participate(self, t: int) -> None:
         if self.soc < TARGET_SOC - SOC_DEADBAND:               # charge
@@ -98,11 +101,12 @@ class BatteryAgent(BaseAgent):
                     qos=1,
                 )
         elif self.soc > TARGET_SOC + SOC_DEADBAND:             # discharge
-            vol = self._dischargeable_kw()
+            vol = self._market_dischargeable_kw()
             if vol > 1e-6:
                 soc_t1 = self.soc - self._energy_to_soc(vol)
                 price = marginal_degradation_cost(self.soc, soc_t1, self.deg)["ask_price_usd_kwh"]
                 self.last_ask_price = price
+                self.pending_market_sells[t] = vol
                 await self.bus.publish(
                     "market/asks",
                     {"tick": t, "agent_id": self.node_id, "intent": "sell",
@@ -112,9 +116,16 @@ class BatteryAgent(BaseAgent):
 
     async def _on_clearing(self, clearing: dict) -> None:
         matches = clearing.get("matches", [])
+        self.pending_market_sells.pop(clearing.get("tick"), None)
+        for old in [tick for tick in self.pending_market_sells if tick < clearing.get("tick", -1)]:
+            self.pending_market_sells.pop(old, None)
+        if self.mode == "grid_forming":
+            return
         discharged = sum(m["kw"] for m in matches if m["seller"] == self.node_id)
         charged = sum(m["kw"] for m in matches if m["buyer"] == self.node_id)
-        self.soc = min(1.0, max(0.0, self.soc + self._energy_to_soc(charged - discharged)))
+        next_soc = self.soc + self._energy_to_soc(charged - discharged)
+        floor = self.soc_floor if discharged > charged else 0.0
+        self.soc = min(1.0, max(floor, next_soc))
         self.flow_kw = discharged - charged                    # + discharge, - charge
         # Grid-forming: report the critical load we could not cover (SoC floor reached).
         self.unmet_kw = max(0.0, self.last_critical_kw - discharged) if self.mode == "grid_forming" else 0.0

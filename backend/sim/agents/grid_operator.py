@@ -26,6 +26,9 @@ class GridOperatorAgent(BaseAgent):
         super().__init__(bus, "GRID_OP")
         self.lines = lines_from_config(cfg)
         self.route = single_feeder_route(next(iter(self.lines)))
+        timing = cfg.get("operator", {})
+        self.settle_grace = int(timing.get("settle_grace_ticks", 8))
+        self.heartbeat_grace = int(timing.get("heartbeat_grace_ticks", self.settle_grace))
         self.miss_threshold = cfg["heartbeat"]["miss_threshold"]
         self.clear_consecutive = cfg["heartbeat"]["clear_consecutive"]
         self.monitored = [cfg["nodes"]["solar"]["id"]]
@@ -55,15 +58,12 @@ class GridOperatorAgent(BaseAgent):
     def _record(self, payload: dict, side: str, order: Order) -> None:
         self.orders.setdefault(payload["tick"], {"bids": [], "asks": []})[side].append(order)
 
-    SETTLE_GRACE = 8                      # ticks of slack so every QoS-1 order has arrived
-    HEARTBEAT_GRACE = 8                   # same bucket delay prevents false liveness misses
-
     async def on_tick(self, tick: dict) -> None:
         t = tick["tick"]
-        settle = t - self.SETTLE_GRACE    # clear a fully-collected book
+        settle = t - self.settle_grace    # clear a fully-collected book
         if settle >= 0:
             await self._settle(settle)
-        hb = t - self.HEARTBEAT_GRACE      # evaluate liveness with extra slack
+        hb = t - self.heartbeat_grace      # evaluate liveness with extra slack
         if hb >= 0:
             await self._detect_faults(hb, t)
         # housekeeping: drop buckets we no longer need

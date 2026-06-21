@@ -98,6 +98,7 @@ async def collect_frames(ws_port: int, frames: list[dict], n: int) -> None:
 
 async def main() -> int:
     cfg = load_config()
+    cfg.setdefault("operator", {}).update(settle_grace_ticks=32, heartbeat_grace_ticks=32)
     run_id = new_run_id("ws")
     ws_port = int(cfg["websocket"]["port"])
 

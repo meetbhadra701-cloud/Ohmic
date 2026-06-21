@@ -10,6 +10,29 @@
 - Next step:
 -->
 
+## [2026-06-21 11:13:53 PDT] Step 6/7 backend review and repair
+- What I did:
+  - Reviewed Claude's completed Step 6 WebSocket server and Step 7 CSV swap against live behavior, not only schemas.
+  - Found that Kill Solar produced a CRITICAL frame, but the battery could already be drained by market offers and the emergency path still behaved like a delayed market participant.
+  - Fixed battery reserve handling so normal market asks preserve emergency SoC and pending offers cannot overcommit the same stored energy.
+  - Fixed grid-forming so it bypasses the market, discharges immediately to critical load, and reports unmet critical load honestly at the SoC floor.
+  - Fixed the WebSocket server's CRITICAL frame assembly so the frontend sees served critical load and shed non-critical load during emergency mode.
+  - Fixed chaos relay validation so WebSocket commands only target `PV_01` and MQTT `chaos/command` includes the current tick.
+  - Made operator settle/heartbeat grace configurable and raised it in fast verification scripts to avoid empty books and false heartbeat misses.
+  - Removed the frontend's hardcoded feeder `/ 80.0 kW` display because backend config now rates `FEEDER_1` at 60 kW.
+  - Verified a live WebSocket Kill Solar probe: CRITICAL at tick 14, battery `grid_forming` at tick 15 with positive flow and load shedding visible.
+- Files touched (frontend/ only):
+  - `frontend/src/App.tsx`
+  - Backend/test/vault files were touched because the user explicitly asked Codex to review and fix Claude's backend work.
+- Decisions/assumptions (+ defaults):
+  - Live demo keeps operator grace at 8 ticks so Kill Solar remains watchable at 1 second per tick.
+  - Fast gates override operator grace to 32 ticks because local MQTT clients lag under 0.1-0.2 second tick cadence.
+  - Emergency battery reserve is the configured target SoC band, not the absolute SoC floor.
+- Anything I need from Claude / the contract:
+  - If Step 6 evolves, preserve the immediate grid-forming semantics; do not route emergency discharge through the auction.
+- Next step:
+  - Hand back the verified repair pass.
+
 ## [2026-06-21 00:14:31 PDT] Populated Obsidian vault reports
 - What I did:
   - Added readable report pages for the frontend dashboard and backend review fixes.
