@@ -6,8 +6,9 @@
 > latest lock line is `LOCKED`.
 
 Broker: local Mosquitto, `localhost:1883`, no auth (sim only, single machine).
-All payloads are JSON (UTF-8). Every message carries a `schema_version` (int) and
-the originating `tick` (int). See `message_schemas.md` for payload shapes.
+All payloads are JSON (UTF-8). Every message carries a `schema_version` (int),
+`run_id` (string), and the originating `tick` (int). See `message_schemas.md` for
+payload shapes.
 
 `<id>` is a node id from the fixed v1 set: `PV_01` (solar), `BESS_01` (battery),
 `LOAD_CAMPUS` (load). The Grid Operator is `GRID_OP` (does not publish node state).
@@ -16,7 +17,7 @@ the originating `tick` (int). See `message_schemas.md` for payload shapes.
 |------------------------|--------------------|--------------------|-----|--------|---------|
 | `grid/tick`            | Clock              | all agents, WS     | 0   | no     | Heartbeat of the sim. Drives every agent. Loss recovered next tick. |
 | `node/<id>/state`      | each node          | Operator, WS       | 0   | yes    | Full node state snapshot, published every tick the node is alive. Retained so late subscribers get last value. |
-| `node/<id>/heartbeat`  | each node          | Operator           | 0   | no     | Lightweight liveness ping, published every tick. **Separate from state** so "alive but silent on state" is still detectable. Absence is what triggers fault detection. |
+| `node/<id>/heartbeat`  | each node          | Operator           | 1   | no     | Lightweight liveness ping, published every tick. **Separate from state** so "alive but silent on state" is still detectable. Absence is what triggers fault detection. |
 | `market/bids`          | Load (`LOAD_CAMPUS`) | Operator         | 1   | no     | Buy orders. QoS 1 — an unheard bid distorts clearing. |
 | `market/asks`          | Battery, Solar     | Operator           | 1   | no     | Sell orders. QoS 1. |
 | `market/clearing`      | Operator (`GRID_OP`) | all agents, WS   | 1   | yes    | Auction result + curtailment. QoS 1, retained (last clearing is authoritative). |

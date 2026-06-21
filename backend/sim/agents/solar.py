@@ -50,5 +50,5 @@ class SolarAgent(BaseAgent):
                 "market/asks",
                 {"tick": t, "agent_id": self.node_id, "intent": "sell",
                  "volume_kw": ask.qty_kw, "min_price_usd_kwh": ask.price_usd_kwh},
-                qos=0,
+                qos=1,
             )

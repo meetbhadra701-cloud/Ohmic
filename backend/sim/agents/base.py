@@ -25,8 +25,6 @@ class BaseAgent:
             await self.bus.subscribe(*self.subscriptions())
             await self.on_start()
             async for msg in self.bus.messages():
-                if msg.retain:
-                    continue          # ignore stale retained state from a prior run
                 await self.on_message(msg)
 
     async def on_start(self) -> None:

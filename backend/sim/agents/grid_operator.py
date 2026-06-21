@@ -55,8 +55,8 @@ class GridOperatorAgent(BaseAgent):
     def _record(self, payload: dict, side: str, order: Order) -> None:
         self.orders.setdefault(payload["tick"], {"bids": [], "asks": []})[side].append(order)
 
-    SETTLE_GRACE = 2                      # ticks of slack so every order has arrived
-    HEARTBEAT_GRACE = 4                   # larger slack for liveness (beats must not be falsely missed)
+    SETTLE_GRACE = 8                      # ticks of slack so every QoS-1 order has arrived
+    HEARTBEAT_GRACE = 8                   # same bucket delay prevents false liveness misses
 
     async def on_tick(self, tick: dict) -> None:
         t = tick["tick"]
@@ -86,7 +86,7 @@ class GridOperatorAgent(BaseAgent):
             {"tick": settle,
              "clearing_price_usd_kwh": result.clearing_price_usd_kwh,
              "matches": matches_payload,
-             "unmet_kw": result.unmet_kw,
+             "unmet_kw": result.unmet_kw + feas.curtailed_kw,
              "surplus_kw": result.surplus_kw,
              "curtailed_kw": feas.curtailed_kw,
              "per_line_flow_kw": feas.per_line_flow_kw},

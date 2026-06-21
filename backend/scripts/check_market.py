@@ -16,12 +16,12 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from sim.bus import Bus
+from sim.bus import Bus, new_run_id
 from sim.config import load_config
 from sim.runner import build_sim
 
 EXPECT_CLEARINGS = 60   # run through midday so solar-peak curtailment is exercised
-TICK_PERIOD = 0.06      # fast but leaves headroom for order round-trips before settle
+TICK_PERIOD = 0.20      # fast demo gate, but enough headroom for QoS-1 order round-trips
 
 
 async def verifier(bus: Bus, clearings: list[dict]) -> None:
@@ -35,12 +35,13 @@ async def verifier(bus: Bus, clearings: list[dict]) -> None:
 
 async def main() -> int:
     cfg = load_config()
+    run_id = new_run_id("market")
     rating = next(iter(cfg["network"]["lines"].values()))["rating_kw"]
     clock, agents = build_sim(cfg, log=lambda m: None, tick_period=TICK_PERIOD,
-                              max_ticks=EXPECT_CLEARINGS + 8)
+                              max_ticks=EXPECT_CLEARINGS + 8, run_id=run_id)
     tasks = [asyncio.create_task(clock.run())] + [asyncio.create_task(a.run()) for a in agents]
     clearings: list[dict] = []
-    vbus = Bus(cfg["mqtt"]["host"], cfg["mqtt"]["port"], "market_verifier")
+    vbus = Bus(cfg["mqtt"]["host"], cfg["mqtt"]["port"], "market_verifier", run_id=run_id)
     try:
         async with asyncio.timeout(30):
             await verifier(vbus, clearings)

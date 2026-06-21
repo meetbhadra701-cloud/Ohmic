@@ -13,13 +13,14 @@ import pathlib
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from sim.bus import Bus
+from sim.bus import Bus, new_run_id
 from sim.clock import Clock
 from sim.config import load_config
 from sim.agents.dummy import DummyNode
 
 EXPECT_TICKS = 20
-TICK_PERIOD = 0.05  # fast ticks for the test
+TICK_PERIOD = 0.08  # fast ticks for the test, with room for state messages
+EXPECTED_NODES = {"PV_01", "BESS_01"}
 
 
 async def verifier(bus: Bus, ticks_seen: list[int], states: dict[str, set]) -> None:
@@ -28,30 +29,34 @@ async def verifier(bus: Bus, ticks_seen: list[int], states: dict[str, set]) -> N
         async for msg in bus.messages():
             if msg.topic == "grid/tick":
                 ticks_seen.append(msg.payload["tick"])
-                if len(set(ticks_seen)) >= EXPECT_TICKS:
-                    return
             elif msg.topic.endswith("/state"):
                 states.setdefault(msg.payload["node_id"], set()).add(msg.payload["tick"])
+            if (
+                len(set(ticks_seen)) >= EXPECT_TICKS
+                and all(len(states.get(node, set())) >= EXPECT_TICKS - 2 for node in EXPECTED_NODES)
+            ):
+                return
 
 
 async def main() -> int:
     cfg = load_config()
     host, port = cfg["mqtt"]["host"], cfg["mqtt"]["port"]
     ticks_per_day = cfg["sim"]["ticks_per_day"]
+    run_id = new_run_id("tick")
 
     ticks_seen: list[int] = []
     states: dict[str, set] = {}
 
-    clock = Clock(Bus(host, port, "clock"), TICK_PERIOD, ticks_per_day, max_ticks=EXPECT_TICKS + 5)
-    pv = DummyNode(Bus(host, port, "dummy_pv"), "PV_01", "solar", {"output_kw": 70.0, "alive": True})
-    bess = DummyNode(Bus(host, port, "dummy_bess"), "BESS_01", "battery", {"soc": 0.6, "flow_kw": 0.0})
+    clock = Clock(Bus(host, port, "clock", run_id=run_id), TICK_PERIOD, ticks_per_day, max_ticks=EXPECT_TICKS + 8)
+    pv = DummyNode(Bus(host, port, "dummy_pv", run_id=run_id), "PV_01", "solar", {"output_kw": 70.0, "alive": True})
+    bess = DummyNode(Bus(host, port, "dummy_bess", run_id=run_id), "BESS_01", "battery", {"soc": 0.6, "flow_kw": 0.0})
 
     tasks = [
         asyncio.create_task(clock.run()),
         asyncio.create_task(pv.run()),
         asyncio.create_task(bess.run()),
     ]
-    vbus = Bus(host, port, "verifier")
+    vbus = Bus(host, port, "verifier", run_id=run_id)
     try:
         async with asyncio.timeout(15):
             await verifier(vbus, ticks_seen, states)
@@ -68,7 +73,7 @@ async def main() -> int:
     assert distinct[0] <= 3, f"ticks started unexpectedly late: {distinct[:3]}"
     assert distinct == list(range(distinct[0], distinct[-1] + 1)), f"ticks not contiguous: {distinct}"
     assert len(distinct) >= EXPECT_TICKS, f"saw only {len(distinct)} ticks"
-    for node in ("PV_01", "BESS_01"):
+    for node in EXPECTED_NODES:
         assert node in states and len(states[node]) >= EXPECT_TICKS - 2, f"{node} under-published: {states.get(node)}"
     print(f"OK: {len(distinct)} monotonic contiguous ticks; nodes published: "
           f"{ {n: len(s) for n, s in states.items()} }")

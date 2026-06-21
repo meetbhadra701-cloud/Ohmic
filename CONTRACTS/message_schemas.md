@@ -8,6 +8,7 @@ All payloads are JSON objects. Common envelope fields appear on **every** messag
 |------------------|--------|-------|-------|
 | `schema_version` | int    | —     | `1` for v1. Bump only via Contract Lock. |
 | `tick`           | int    | ticks | Monotonic sim tick the message belongs to. |
+| `run_id`         | string | —     | Unique sim-run identifier used to ignore stale retained MQTT frames. |
 
 Power is **kW**, energy **kWh**, price **USD/kWh**, SoC a **fraction 0.0–1.0**
 (the WebSocket frame also exposes `soc_percent` for display convenience).
@@ -49,7 +50,12 @@ Discriminated by `type`. Common: `node_id`, `type`, `tick`, `health`
   "critical_kw": 40.0,        // >=0 must-serve portion
   "served_kw": 100.0,         // >=0 actually delivered
   "shed_kw": 0.0,             // >=0 non-critical demand shed
-  "health": "nominal" }
+  "health": "nominal",
+  "predicted_demand_kw": 118.0,
+  "forecast_horizon_ticks": 5,
+  "ridge_cond": 1240.5,
+  "ridge_reanchor_count": 0,
+  "ridge_warm": true }
 ```
 
 ## `node/<id>/heartbeat`  (each node → bus)

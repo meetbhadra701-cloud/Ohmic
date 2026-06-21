@@ -16,7 +16,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from sim.bus import Bus
+from sim.bus import Bus, new_run_id
 from sim.config import load_config
 from sim.runner import build_sim
 
@@ -44,11 +44,12 @@ async def observe(bus, alerts, battery_mode, load_shed, solar_alive):
 async def main() -> int:
     cfg = load_config()
     cfg["chaos"].update(kill_tick=KILL, revive_tick=REVIVE)
-    clock, agents = build_sim(cfg, log=lambda m: None, tick_period=TICK_PERIOD, max_ticks=RUN_TO)
+    run_id = new_run_id("heal")
+    clock, agents = build_sim(cfg, log=lambda m: None, tick_period=TICK_PERIOD, max_ticks=RUN_TO, run_id=run_id)
     tasks = [asyncio.create_task(clock.run())] + [asyncio.create_task(a.run()) for a in agents]
 
     alerts, battery_mode, load_shed, solar_alive = [], {}, {}, {}
-    obus = Bus(cfg["mqtt"]["host"], cfg["mqtt"]["port"], "heal_observer")
+    obus = Bus(cfg["mqtt"]["host"], cfg["mqtt"]["port"], "heal_observer", run_id=run_id)
     try:
         async with asyncio.timeout(30):
             await asyncio.wait_for(observe(obus, alerts, battery_mode, load_shed, solar_alive),

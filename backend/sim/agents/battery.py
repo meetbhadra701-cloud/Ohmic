@@ -84,7 +84,7 @@ class BatteryAgent(BaseAgent):
                 "market/asks",
                 {"tick": t, "agent_id": self.node_id, "intent": "sell",
                  "volume_kw": vol, "min_price_usd_kwh": self.floor_price},
-                qos=0,
+                qos=1,
             )
 
     async def _participate(self, t: int) -> None:
@@ -95,7 +95,7 @@ class BatteryAgent(BaseAgent):
                     "market/bids",
                     {"tick": t, "agent_id": self.node_id, "intent": "buy",
                      "volume_kw": vol, "max_price_usd_kwh": CHARGE_PRICE},
-                    qos=0,
+                    qos=1,
                 )
         elif self.soc > TARGET_SOC + SOC_DEADBAND:             # discharge
             vol = self._dischargeable_kw()
@@ -107,7 +107,7 @@ class BatteryAgent(BaseAgent):
                     "market/asks",
                     {"tick": t, "agent_id": self.node_id, "intent": "sell",
                      "volume_kw": vol, "min_price_usd_kwh": price},
-                    qos=0,
+                    qos=1,
                 )
 
     async def _on_clearing(self, clearing: dict) -> None:

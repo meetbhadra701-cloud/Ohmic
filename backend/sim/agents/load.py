@@ -100,7 +100,7 @@ class LoadAgent(BaseAgent):
                 "market/bids",
                 {"tick": t, "agent_id": self.node_id, "intent": "buy",
                  "volume_kw": bid.qty_kw, "max_price_usd_kwh": bid.price_usd_kwh},
-                qos=0,
+                qos=1,
             )
 
         # Online learning: update the ridge with this tick's realized demand.
@@ -113,10 +113,15 @@ class LoadAgent(BaseAgent):
         self.served_kw = sum(m["kw"] for m in clearing.get("matches", []) if m["buyer"] == self.node_id)
 
     async def _publish_state(self, t: int, critical: float) -> None:
+        rs = self.ridge.state()
         await self.bus.publish(
             f"node/{self.node_id}/state",
             {"tick": t, "node_id": self.node_id, "type": "load",
              "demand_kw": self.demand_kw, "critical_kw": critical,
-             "served_kw": self.served_kw, "shed_kw": self.shed_kw, "health": "nominal"},
+             "served_kw": self.served_kw, "shed_kw": self.shed_kw, "health": "nominal",
+             # forecast telemetry (consumed by the WebSocket layer for the frame's forecast block)
+             "predicted_demand_kw": self.predicted_kw, "forecast_horizon_ticks": self.horizon,
+             "ridge_cond": rs["cond"], "ridge_reanchor_count": rs["reanchor_count"],
+             "ridge_warm": rs["warm"]},
             retain=True,
         )

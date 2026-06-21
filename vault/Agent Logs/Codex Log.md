@@ -10,6 +10,27 @@
 - Next step:
 -->
 
+## [2026-06-21 00:01:20 PDT] Backend review fixes
+- What I did:
+  - Fixed retained MQTT cross-run contamination by adding `run_id` envelope stamping/filtering and unique per-run client ids.
+  - Added `FakeBus`/`FakeBroker` for deterministic broker-free tests.
+  - Aligned market bids/asks with contract QoS 1 and documented heartbeat QoS 1.
+  - Updated gate scripts to use run ids and wait for both ticks and state messages.
+  - Updated `market/clearing.unmet_kw` to include curtailed demand.
+  - Updated MQTT schemas for `run_id` and load forecast telemetry.
+  - Verified backend tests and gates.
+- Files touched (frontend/ only):
+  - None; this was a user-requested backend/contracts repair pass.
+- Decisions/assumptions (+ defaults):
+  - `run_id` is now part of the common MQTT envelope and is required for retained-frame safety.
+  - `check_market.py` uses a 0.20 s tick period so QoS 1 order round-trips arrive before settlement on the Intel Air.
+  - Operator settle/heartbeat grace is 8 ticks to avoid false empty-books and false liveness misses under async MQTT scheduling.
+- Anything I need from Claude / the contract:
+  - Future WebSocket server should include or preserve `run_id` internally when relaying chaos commands onto MQTT.
+  - If WebSocket frames expose `run_id`, `CONTRACTS/websocket_api.md` and frontend types need a Contract Lock update.
+- Next step:
+  - Build Step 6 WebSocket server against the updated MQTT envelope and verify live frontend mode with `VITE_OHMIC_STREAM=real`.
+
 ## [2026-06-20 23:13:33 PDT] Frontend scaffold + contract-shaped dashboard
 - What I did:
   - Scaffolded `frontend/` as a Vite + React + TypeScript app.
