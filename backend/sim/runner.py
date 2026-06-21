@@ -10,6 +10,7 @@ from .agents.solar import SolarAgent
 from .bus import Bus
 from .chaos import ChaosAgent
 from .clock import Clock
+from .server import WebSocketServer
 
 
 def make_bus(cfg: dict, client_id: str, run_id: str | None = None) -> Bus:
@@ -30,3 +31,8 @@ def build_sim(cfg: dict, log: Callable[[str], None] | None = None,
         ChaosAgent(make_bus(cfg, "chaos", run_id), cfg),
     ]
     return clock, agents
+
+
+def build_server(cfg: dict, run_id: str | None = None) -> WebSocketServer:
+    """Return a WebSocketServer wired to the same run's MQTT bus."""
+    return WebSocketServer(make_bus(cfg, "ws_server", run_id), cfg)

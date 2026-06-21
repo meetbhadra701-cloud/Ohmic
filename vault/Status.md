@@ -10,7 +10,7 @@ _Claude updates this after each build step. Human reads it first._
 - [x] Math: degradation cost, recursive ridge (+guards), CDA + feasibility — 2026-06-20, 34 pytest green (all 5 ridge rails exercised)
 - [x] Market loop steady-state — 2026-06-20, check_market green (trades + curtailment + energy conservation, stable across runs)
 - [x] Self-healing protocol — 2026-06-20, check_heal green (kill -> CRITICAL -> shed + grid-forming -> ALL_CLEAR -> market), stable across runs
-- [ ] WebSocket server (integration seam)
+- [x] WebSocket server (integration seam) — 2026-06-21, check_ws green (30 frames, all fields contract-compliant)
 - [ ] Real-data CSV swap
 - [ ] Frontend scaffold + mock stream
 - [ ] 3D scene + data binding + flow lines
@@ -22,4 +22,4 @@ _Claude updates this after each build step. Human reads it first._
 - (none) — Codex was blocked on `CONTRACTS/websocket_api.md`; now published.
 
 ## In progress
-- Step 6: WebSocket server — broadcast the per-tick superset frame for the frontend.
+- Step 7: Real-data CSV swap — load CSV (weather + load) behind the same profiles.py interface.

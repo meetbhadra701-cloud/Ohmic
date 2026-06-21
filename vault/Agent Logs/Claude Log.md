@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-21] WebSocket server — frontend integration seam (Step 6)
+- What I did: Wrote `backend/sim/server.py` (`WebSocketServer` class) and `backend/scripts/check_ws.py` (Step 6 gate). The server owns its own Bus connection (same run_id as the sim), subscribes to all MQTT topics, maintains latest-value caches, and broadcasts one superset JSON frame per `grid/tick`. A late-joining client receives the last cached frame immediately. Client→server chaos commands (`{ "type":"chaos", "target":"PV_01", "action":"kill"|"restore" }`) are validated against the known node set and relayed to MQTT `chaos/command`. Also added `build_server(cfg, run_id)` to `runner.py`. `check_ws.py` runs the full sim + server, collects 30 frames, and validates every field in every frame against `CONTRACTS/websocket_api.md`. Gate green (2 stable runs). All 36 unit tests still green.
+- Files touched (backend/ only): `backend/sim/server.py` (new), `backend/sim/runner.py` (add build_server), `backend/scripts/check_ws.py` (new).
+- Decisions/assumptions (+ defaults): `pv_alive` is computed from `alert_level` (not just cached state.alive) because solar stops publishing when killed — the alert is the authoritative liveness signal. `_pending_alerts` flushes each tick so the `alerts` array shows what changed this tick; `mode` is the persistent NORMAL/CRITICAL indicator. MQTT subscribe uses QoS 0 for `grid/tick` and QoS 1 for state/clearing/alert. The 0.1s retry-connect loop in `check_ws.py` replaces the fragile fixed sleep.
+- Open questions / risks for the human: none — frame contract matches `CONTRACTS/websocket_api.md` field-for-field.
+- Next step: Step 7 — real-data CSV swap behind the same `profiles.py` interface; re-run Steps 4–6 checks unchanged.
+
 ## [2026-06-20] Self-healing protocol (Step 5)
 - What I did: Added `chaos.py` (kills/restores solar on schedule or via WS command), battery grid-forming behavior (dumps available discharge to the critical load at the price floor, reports `unmet_kw` against the load's critical demand), and made the operator's fault detection robust. `check_heal.py` asserts the full transcript and passes deterministically across runs: kill@26 → CRITICAL@~33 → load sheds non-critical + battery grid-forming → ALL_CLEAR@~49 → back to market. All 34 unit tests + tick/market gates still green.
 - Files touched (backend/ only): `backend/sim/chaos.py`, `backend/sim/runner.py`, `backend/sim/agents/{battery,solar,load,grid_operator,base}.py`, `backend/sim/bus.py` (Message.retain), `backend/scripts/check_heal.py`, `backend/scripts/check_tick.py` (relaxed start assertion).
