@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-20] The math — 4 modules + 5 ridge rails (Step 3)
+- What I did: Implemented all four pure math modules and tested them (34 pytest total). `degradation.py` (quadratic-DoD marginal cost, floor + non-negative clamp). `recursive_ridge.py` (Sherman-Morrison + forgetting, with all 5 rails: Welford standardization w/ unstandardized bias, condition watchdog + numpy closed-form re-anchor, denom-underflow skip, prediction clamp, bounded rolling buffer). `clearing.py` (real CDA, uniform price = marginal ask). `network.py` (line-capacity curtailment of marginal matches; `route` callable = v2 OPF seam). Forced the underflow and re-anchor rails to fire in tests.
+- Files touched (backend/ only): `backend/sim/physics/{degradation,recursive_ridge,clearing,network}.py`, `backend/tests/test_{degradation,recursive_ridge,clearing,network}.py`.
+- Decisions/assumptions (+ defaults): Re-anchor uses numpy closed-form ridge (`solve(XᵀX+αI, Xᵀy)`) as PRIMARY — scikit-learn is installed but intentionally not a hard dependency, removing the Python-3.14 wheel risk. Ridge logs re-anchors/skips via an injected `log` callable (no I/O in the pure module); the Load agent will wire it to the vault.
+- Open questions / risks for the human: Degradation coefficients are empirical stand-ins (documented in config), not a specific cell datasheet.
+- Next step: Step 4 — wire real agents and the market loop; assert energy conservation.
+
 ## [2026-06-20] Physical models — synthetic curves (Step 2)
 - What I did: `physics/profiles.py` — pure deterministic curves: `solar_output_kw` (sin bell over a dawn-0.25/dusk-0.75 daylight window, capped at inverter limit), `load_demand_kw` (morning+evening Gaussian peaks over a base, optional seeded noise), `split_load` (critical/non-critical). `conftest.py` makes `sim` importable in tests. 12 pytest assertions green.
 - Files touched (backend/ only): `backend/sim/physics/profiles.py`, `backend/conftest.py`, `backend/tests/test_profiles.py`.
