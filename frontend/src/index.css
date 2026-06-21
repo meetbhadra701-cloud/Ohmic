@@ -1,0 +1,37 @@
+:root {
+  --bg: #071013;
+  --panel: #0b171a;
+  --line: #244a50;
+  --text: #e8f4f5;
+  --muted: #9bb3b8;
+  --heading: Georgia, 'Times New Roman', serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--sans);
+  font-size: 16px;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100svh;
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+}
