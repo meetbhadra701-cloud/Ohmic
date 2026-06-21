@@ -22,7 +22,8 @@ class DegradationParams:
     @classmethod
     def from_config(cls, cfg: dict) -> "DegradationParams":
         d = cfg["degradation"]
-        return cls(d["b0"], d["b1"], d["b2"], d["c_new_per_kwh"], d["floor_price"], d["margin"])
+        return cls(float(d["b0"]), float(d["b1"]), float(d["b2"]),
+                   float(d["c_new_per_kwh"]), float(d["floor_price"]), float(d["margin"]))
 
 
 def marginal_degradation_cost(soc_t: float, soc_t1: float, p: DegradationParams) -> dict:

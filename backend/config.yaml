@@ -20,9 +20,9 @@ nodes:
   load:    { id: LOAD_CAMPUS, peak_kw: 120.0, base_kw: 40.0, critical_fraction: 0.40, noise_kw: 5.0 }
 
 degradation:                # empirical stand-ins (NOT a specific cell datasheet)
-  b0: 5.0e-5                # capacity-loss intercept (dimensionless)
-  b1: 1.0e-4                # per-unit avg SoC
-  b2: 2.0e-3               # per-(unit DoD)^2 — chosen so the quadratic term dominates deep swings
+  b0: 0.00005               # capacity-loss intercept (dimensionless)  [plain decimals: YAML 1.1 parses 5e-5 as a STRING]
+  b1: 0.0001                # per-unit avg SoC
+  b2: 0.002                 # per-(unit DoD)^2 — chosen so the quadratic term dominates deep swings
   c_new_per_kwh: 150.0      # USD/kWh replacement cost of new capacity
   floor_price: 0.02         # USD/kWh price floor
   margin: 0.005             # USD/kWh ask markup over marginal cost
@@ -31,14 +31,14 @@ ridge:                      # online recursive ridge forecast (Agent B)
   alpha: 1.0                # P0 = (1/alpha) I_d
   forgetting: 0.99          # f in (0,1]; adaptive but stable (~100-tick memory)
   cond_check_every: 20      # ticks between condition watchdog runs
-  cond_max: 1.0e8           # condition-number threshold to re-anchor
+  cond_max: 100000000.0     # condition-number threshold to re-anchor (1e8; plain decimal for YAML)
   buffer_k: 96              # rolling re-anchor window (one sim day)
   pred_hard_cap_kw: 500.0   # rail-4 upper physical clamp
   horizon_ticks: 5          # forecast lookahead
 
 network:
   lines:
-    FEEDER_1: { rating_kw: 80.0 }   # deliberately < peak demand so curtailment triggers
+    FEEDER_1: { rating_kw: 60.0 }   # deliberately < solar peak (80) so midday flow curtails
 
 heartbeat:
   miss_threshold: 3         # missed heartbeats before CRITICAL

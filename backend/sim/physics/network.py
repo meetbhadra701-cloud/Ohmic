@@ -30,6 +30,7 @@ class FeasResult:
     curtailed_kw: float                            # total trimmed
     per_line_flow_kw: dict[str, float]
     reasons: list[dict]                            # per curtailed match: {line_id, requested_kw, rating_kw, curtailed_kw}
+    breakdown: list[dict]                          # per ORIGINAL match: {buyer, seller, requested_kw, delivered_kw, curtailed_kw, line_id, reason}
 
 
 def single_feeder_route(line_id: str = "FEEDER_1") -> Callable[[Match], str]:
@@ -45,6 +46,7 @@ def feasible_flows(
     flow: dict[str, float] = {lid: 0.0 for lid in lines}
     adjusted: list[Match] = []
     reasons: list[dict] = []
+    breakdown: list[dict] = []
     total_curtailed = 0.0
 
     for m in matches:
@@ -54,16 +56,21 @@ def feasible_flows(
         if m.qty_kw <= headroom + _EPS:
             flow[lid] = flow.get(lid, 0.0) + m.qty_kw
             adjusted.append(m)
+            breakdown.append({"buyer": m.buyer_id, "seller": m.seller_id, "requested_kw": m.qty_kw,
+                              "delivered_kw": m.qty_kw, "curtailed_kw": 0.0, "line_id": lid, "reason": None})
             continue
         # Over capacity: curtail this marginal match to the remaining headroom.
         delivered = max(0.0, headroom)
         curtailed = m.qty_kw - delivered
         total_curtailed += curtailed
         flow[lid] = flow.get(lid, 0.0) + delivered
+        reason = f"{lid} over rating {line.rating_kw:g}kW"
         reasons.append({
             "line_id": lid, "requested_kw": m.qty_kw, "rating_kw": line.rating_kw,
             "curtailed_kw": curtailed,
         })
+        breakdown.append({"buyer": m.buyer_id, "seller": m.seller_id, "requested_kw": m.qty_kw,
+                          "delivered_kw": delivered, "curtailed_kw": curtailed, "line_id": lid, "reason": reason})
         if delivered > _EPS:
             adjusted.append(replace(m, qty_kw=delivered))
         # else: match fully dropped (no headroom left)
@@ -73,6 +80,7 @@ def feasible_flows(
         curtailed_kw=total_curtailed,
         per_line_flow_kw=flow,
         reasons=reasons,
+        breakdown=breakdown,
     )
 
 

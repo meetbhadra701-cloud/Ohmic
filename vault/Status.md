@@ -8,7 +8,7 @@ _Claude updates this after each build step. Human reads it first._
 - [x] Clock + bus + dummy nodes — 2026-06-20, check_tick green (20 contiguous ticks)
 - [x] Physical models (solar/load, synthetic) — 2026-06-20, 12 pytest green
 - [x] Math: degradation cost, recursive ridge (+guards), CDA + feasibility — 2026-06-20, 34 pytest green (all 5 ridge rails exercised)
-- [ ] Market loop steady-state
+- [x] Market loop steady-state — 2026-06-20, check_market green (trades + curtailment + energy conservation, stable across runs)
 - [ ] Self-healing protocol
 - [ ] WebSocket server (integration seam)
 - [ ] Real-data CSV swap
@@ -22,4 +22,4 @@ _Claude updates this after each build step. Human reads it first._
 - (none) — Codex was blocked on `CONTRACTS/websocket_api.md`; now published.
 
 ## In progress
-- Step 4: market loop — real solar/battery/load/operator agents, steady-state.
+- Step 5: self-healing — chaos kill, heartbeat alert, shed + grid-forming, recovery.

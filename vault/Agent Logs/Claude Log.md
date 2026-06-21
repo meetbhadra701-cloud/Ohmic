@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-20] Market loop — real agents, steady-state (Step 4)
+- What I did: Built the four real agents (`solar.py`, `battery.py`, `load.py`, `grid_operator.py`), a `runner.py` to wire the sim, and `check_market.py`. The operator clears the CDA + feasibility and publishes `market/clearing` each settled tick. `check_market` passes deterministically (trades + curtailment + energy conservation, all line flows ≤ rating, stable over repeated runs). All 34 unit tests still green.
+- Files touched (backend/ only): `backend/sim/agents/{solar,battery,load,grid_operator}.py`, `backend/sim/runner.py`, `backend/scripts/check_market.py`, `backend/sim/physics/network.py` (additive per-match breakdown), `backend/config.yaml`, `backend/sim/physics/{degradation,recursive_ridge}.py` (float casts).
+- Decisions/assumptions (+ defaults): See `vault/Decisions/0002-market-loop-design.md` — (1) 2-tick settlement grace for reliable pub/sub clearing; (2) orders are QoS 0, clearing/alerts QoS 1; (3) battery is a two-sided participant (charge below SoC target band, discharge above) so curtailment is exercised; (4) fixed a PyYAML scientific-notation-as-string trap + added defensive numeric casts. Feeder rating lowered to 60 kW (< 80 kW solar peak) so midday curtailment triggers.
+- Open questions / risks for the human: Night ticks legitimately have no trades (no generation; battery below discharge threshold) — load shows `unmet` at night, which is physically correct, not a bug.
+- Next step: Step 5 — self-healing (chaos kill, alert, shed, grid-forming, recovery). Heartbeat detection + fault-mode hooks are already in place.
+
 ## [2026-06-20] The math — 4 modules + 5 ridge rails (Step 3)
 - What I did: Implemented all four pure math modules and tested them (34 pytest total). `degradation.py` (quadratic-DoD marginal cost, floor + non-negative clamp). `recursive_ridge.py` (Sherman-Morrison + forgetting, with all 5 rails: Welford standardization w/ unstandardized bias, condition watchdog + numpy closed-form re-anchor, denom-underflow skip, prediction clamp, bounded rolling buffer). `clearing.py` (real CDA, uniform price = marginal ask). `network.py` (line-capacity curtailment of marginal matches; `route` callable = v2 OPF seam). Forced the underflow and re-anchor rails to fire in tests.
 - Files touched (backend/ only): `backend/sim/physics/{degradation,recursive_ridge,clearing,network}.py`, `backend/tests/test_{degradation,recursive_ridge,clearing,network}.py`.

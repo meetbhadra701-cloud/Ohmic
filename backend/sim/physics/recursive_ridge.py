@@ -37,9 +37,9 @@ class RidgeConfig:
     def from_config(cls, cfg: dict, d: int) -> "RidgeConfig":
         r = cfg["ridge"]
         return cls(
-            d=d, alpha=r["alpha"], f=r["forgetting"],
-            cond_check_every=r["cond_check_every"], cond_max=r["cond_max"],
-            buffer_k=r["buffer_k"], pred_hard_cap_kw=r["pred_hard_cap_kw"],
+            d=d, alpha=float(r["alpha"]), f=float(r["forgetting"]),
+            cond_check_every=int(r["cond_check_every"]), cond_max=float(r["cond_max"]),
+            buffer_k=int(r["buffer_k"]), pred_hard_cap_kw=float(r["pred_hard_cap_kw"]),
         )
 
 
