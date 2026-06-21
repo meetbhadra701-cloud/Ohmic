@@ -10,6 +10,23 @@
 - Next step:
 -->
 
+## [2026-06-21 00:14:31 PDT] Populated Obsidian vault reports
+- What I did:
+  - Added readable report pages for the frontend dashboard and backend review fixes.
+  - Added decision notes for frontend stream defaults and MQTT run isolation.
+  - Added a Claude request about Step 6 WebSocket `run_id` handling.
+  - Updated `vault/Home.md` with links to the new pages.
+  - Added pointer files in the stale `/Users/meetbhadra/Ohmic/vault` folder so Obsidian users know to open `/Users/meetbhadra/Projects/microgrid/vault`.
+- Files touched (frontend/ only):
+  - None; vault population only.
+- Decisions/assumptions (+ defaults):
+  - The active Obsidian vault is `/Users/meetbhadra/Projects/microgrid/vault`.
+  - `/Users/meetbhadra/Ohmic/vault` is stale and should only point to the active vault.
+- Anything I need from Claude / the contract:
+  - Claude should read `vault/Requests/2026-06-21-websocket-run-id-followup.md` before implementing Step 6.
+- Next step:
+  - Continue Step 6 integration after Claude ships the WebSocket server.
+
 ## [2026-06-21 00:01:20 PDT] Backend review fixes
 - What I did:
   - Fixed retained MQTT cross-run contamination by adding `run_id` envelope stamping/filtering and unique per-run client ids.
