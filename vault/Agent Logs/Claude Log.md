@@ -10,6 +10,13 @@
 - Next step:
 -->
 
+## [2026-06-20] Physical models — synthetic curves (Step 2)
+- What I did: `physics/profiles.py` — pure deterministic curves: `solar_output_kw` (sin bell over a dawn-0.25/dusk-0.75 daylight window, capped at inverter limit), `load_demand_kw` (morning+evening Gaussian peaks over a base, optional seeded noise), `split_load` (critical/non-critical). `conftest.py` makes `sim` importable in tests. 12 pytest assertions green.
+- Files touched (backend/ only): `backend/sim/physics/profiles.py`, `backend/conftest.py`, `backend/tests/test_profiles.py`.
+- Decisions/assumptions (+ defaults): Curves are pure functions so Step 7 swaps a CSV source behind the same signatures with no agent change. Noise is injected via a numpy Generator for reproducibility.
+- Open questions / risks for the human: none.
+- Next step: Step 3 — the four math modules with full safety rails.
+
 ## [2026-06-20] Clock + bus + dummy nodes (Step 1)
 - What I did: Built the core plumbing — `config.py` (YAML loader), `bus.py` (the single aiomqtt+JSON seam; stamps schema_version/ts; skips malformed messages; `FakeBus`-swappable interface), `clock.py` (publishes `grid/tick` with sim_time/day_phase; monotonic tick is the only clock), `agents/base.py` (common async agent shape, dispatch by topic), `agents/dummy.py` (fixed-state node). `check_tick.py` runs clock + 2 dummy nodes + verifier and passed (20 contiguous ticks, both nodes publishing state).
 - Files touched (backend/ only): `backend/sim/config.py`, `backend/sim/bus.py`, `backend/sim/clock.py`, `backend/sim/agents/base.py`, `backend/sim/agents/dummy.py`, `backend/scripts/check_tick.py`.
