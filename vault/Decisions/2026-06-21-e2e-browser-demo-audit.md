@@ -7,6 +7,42 @@
 > files (frontend was read-only; only `/tmp/ws_logger.py` + `/tmp` harnesses and
 > direct-WS probes were used).
 
+## 0. FOLLOW-UP VERIFICATION ROUND (2026-06-21, same day) — 7 items + 1 fix
+
+**Codex cross-check note:** The lower original findings D1/D2/D3/D4 are now
+historical. Codex fixed them in `9582cf8 fix browser e2e frontend caveats`.
+Current `App.tsx` renders sustained CRITICAL banner copy from `frame.mode`, and
+current `stream.ts` has reconnect/backoff plus queued Kill/Restore sends.
+
+A second pass drove the seven items the first audit left UNVERIFIED/partial. Result:
+six PASS, one fix landed, one tooling-limited.
+
+| Item | Result | Evidence |
+|---|---|---|
+| Window resize / fullscreen | **PASS (minor caveat)** | 699/1280/1400 widths reflow cleanly; `canvas.getContext().isContextLost()==false` at each; no console errors. **Narrow <~880px → horizontal overflow** (3D canvas has ~883px min-width, doesn't shrink) — desktop-oriented design, frontend/Codex. True OS-fullscreen needs a user gesture; large-window proxy passed (recipe in §7). |
+| 5+ min FPS/memory soak | **PASS** | 295s, 286 rAF FPS samples. **No leak**: `performance.memory` heap sawtooths ~48–105 MB with active GC (series rises *and* falls; single-point peaks are pre-GC, not growth) vs 4.2 GB limit. FPS median 38 / avg 36 / P10 22.5 — dips track concurrent automation load; no freezes. |
+| Background idle then interact | **PASS** | Tab backgrounded (`visibilityState==hidden`) 94s → WS stayed live, advanced **93 ticks** in the background (data/panels keep updating; only the 3D `requestAnimationFrame` render pauses while hidden — normal, resumes on foreground). Post-idle **Kill click landed normally** (CRITICAL at +16 ticks, battery grid-formed to the 0.20 floor). No frozen socket. |
+| Mosquitto drop & recover | **FIXED + verified** | **Was a crash** (unhandled `MqttError` killed the whole backend). Added bounded-backoff reconnect to `BaseAgent.run`, `Clock.run`, `WebSocketServer.run` + guarded the chaos relay. Now backend **survives** the outage (reconnect logs from every agent + clock) and **resumes** on broker return (frames continue, tick monotonic, no NaN). Verified: 46 pytest, all 5 gates, live drop→recover cycle. `on_start` is a no-op so reconnect re-run is side-effect-free. |
+| Network throttling (Slow 3G) | **UNVERIFIED (tooling limit)** | True CDP `Network.emulateNetworkConditions` is not exposed by the available browser tools, and a pre-load `window.WebSocket` wrapper can't survive a reload via page-context injection. Risk is bounded by two verified facts: (a) every frame is a **full superset snapshot** (not a delta) so a delayed/dropped frame never yields torn/partial state — it's correct the moment it arrives; (b) the disconnect path already shows an **honest "waiting" gate, not a zombie**. Manual recipe in §7. |
+| True 90% vs 25% SoC kill | **PASS** | Deterministic harness: 90% sustains critical load **7 grid-forming ticks / ~23 kWh** before honest unmet; 25% **1 tick / ~2 kWh**, unmet immediately; both stop exactly at the 0.20 floor. ~11× reserve difference proves SoC-dependent behavior end-to-end. Degradation ask is SoC-sensitive ($0.0267 vs $0.0250); quadratic-dod dominance is covered by the existing deep-swing unit test. |
+| Ridge re-anchor in a live run | **PASS** | Live run showed **`forecast.reanchor_count == 1`** (that field increments *only* inside `_reanchor`, called *only* when `cond > cond_max`). Controlled real-sim harness (cond_max lowered) fired the watchdog at ticks 10/20/30: each time `cond` dropped back to 1.0, count incremented, and `"ridge re-anchored at tick N (cond=…); P,theta reset"` was logged. Mechanism confirmed; CRITICAL does **not** reset the ridge (load.py only sets mode). |
+
+**Follow-up manual recipes** (items needing CDP / OS gestures the tools can't drive):
+- **Network throttle:** DevTools → Network → throttling = *Slow 3G* (or custom 50 kbps,
+  400 ms RTT) with the dashboard open. *Expect:* panels update in slower bursts with
+  *correct* values (full-snapshot frames); no crash; no stale-but-pretending UI.
+- **True OS fullscreen:** press the green window button / `F11`, or click into the page
+  then run the app's fullscreen control if present. *Expect:* canvas fills the screen,
+  no layout break, WebGL stays alive.
+
+**Backend fix diff (my ownership):** `backend/sim/agents/base.py`,
+`backend/sim/clock.py`, `backend/sim/server.py` — reconnect loops only; no behavior
+change on the happy path (FakeBus never raises `MqttError`, so unit tests run the
+body once, unchanged). This supersedes the original report's implicit assumption that
+broker loss was survivable — it was not, and now is.
+
+---
+
 ## 1. VERDICT
 
 **PASS-WITH-CAVEATS.** The full v1 slice runs end-to-end live in a real browser:
@@ -110,7 +146,7 @@ faithfully renders the broadcast rather than local optimism.
 
 **Blocks-polish for the demo (fix before showing):**
 
-- **D1 [HIGH] — Alert-banner text is stale during CRITICAL.** While `mode` is
+- **D1 [RESOLVED by Codex] — Alert-banner text is stale during CRITICAL.** While `mode` is
   CRITICAL, the status banner keeps reading *"NORMAL: Market and physical
   constraints are steady"* (only its border turns red). Confirmed 3×.
   **Root cause:** the WS `alerts` array is a **one-tick transient** — it is populated
@@ -137,7 +173,7 @@ faithfully renders the broadcast rather than local optimism.
   client-message handling for buffering; confirm the chaos frame is sent on click,
   not on a tick/animation boundary.
 
-- **D4 [MED] — No WebSocket auto-reconnect.** `frontend/src/stream.ts` opens the
+- **D4 [RESOLVED by Codex] — No WebSocket auto-reconnect.** `frontend/src/stream.ts` opens the
   socket once; on `close` it only sets a status string ("Disconnected from …") with
   **no retry**. After any backend hiccup the dashboard is stuck on "Waiting for the
   first telemetry frame…" until a manual reload.

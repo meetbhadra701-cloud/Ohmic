@@ -7,10 +7,15 @@ and pausable. The monotonic `tick` counter is the only clock that matters.
 from __future__ import annotations
 
 import asyncio
+import logging
+
+import aiomqtt
 
 from .bus import Bus
 
 TOPIC_TICK = "grid/tick"
+
+log = logging.getLogger("sim.clock")
 
 
 def tick_to_sim_time(tick: int, ticks_per_day: int) -> str:
@@ -34,16 +39,31 @@ class Clock:
         self.tick = 0
 
     async def run(self) -> None:
-        async with self._bus:
-            while self._max_ticks == 0 or self.tick < self._max_ticks:
-                await self._bus.publish(
-                    TOPIC_TICK,
-                    {
-                        "tick": self.tick,
-                        "sim_time": tick_to_sim_time(self.tick, self._ticks_per_day),
-                        "day_phase": day_phase(self.tick, self._ticks_per_day),
-                    },
-                    qos=0,
-                )
-                self.tick += 1
-                await asyncio.sleep(self._period)
+        """Publish ticks forever, surviving broker drops.
+
+        On `MqttError` the clock reconnects (bounded backoff) and resumes from the
+        *same* tick — `self.tick` only advances after a successful publish, so the
+        monotonic counter never skips or rewinds across a broker outage.
+        """
+        backoff = 1.0
+        while True:
+            try:
+                async with self._bus:
+                    backoff = 1.0
+                    while self._max_ticks == 0 or self.tick < self._max_ticks:
+                        await self._bus.publish(
+                            TOPIC_TICK,
+                            {
+                                "tick": self.tick,
+                                "sim_time": tick_to_sim_time(self.tick, self._ticks_per_day),
+                                "day_phase": day_phase(self.tick, self._ticks_per_day),
+                            },
+                            qos=0,
+                        )
+                        self.tick += 1
+                        await asyncio.sleep(self._period)
+                return  # reached max_ticks → done
+            except aiomqtt.MqttError as exc:
+                log.warning("clock lost broker (%s); reconnecting in %.1fs", exc, backoff)
+                await asyncio.sleep(backoff)
+                backoff = min(backoff * 2, 10.0)

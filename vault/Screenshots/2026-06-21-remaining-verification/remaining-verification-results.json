@@ -1,0 +1,1237 @@
+{
+  "startedAt": "2026-06-22T02:02:02.192Z",
+  "evidenceDir": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification",
+  "resize": {
+    "small": {
+      "name": "01-resize-small",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/01-resize-small.png",
+      "ui": {
+        "tick": 190,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 1611.2. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "66.5 kW",
+        "canvas": {
+          "width": 890,
+          "height": 819,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 190,
+        "sim_time": "23:30",
+        "day_phase": 0.9791666666666666,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.7,
+            "soc_percent": 70,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 32.54661536768903,
+            "critical_kw": 13.018646147075613,
+            "served_kw": 0,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 66.51941120611887,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 36.523277923862615,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 32.54661536768903,
+          "cond": 1611.1642164199488,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "large": {
+      "name": "02-resize-large",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/02-resize-large.png",
+      "ui": {
+        "tick": 192,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 1664.4. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "48.8 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 192,
+        "sim_time": "00:00",
+        "day_phase": 0,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.7,
+            "soc_percent": 70,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 34.107801708001794,
+            "critical_kw": 13.643120683200719,
+            "served_kw": 0,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 48.82401232725036,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 38.1454469077291,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 34.107801708001794,
+          "cond": 1664.4476133745707,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "pass": true
+  },
+  "fullscreen": {
+    "requestResult": {
+      "ok": true
+    },
+    "capture": {
+      "name": "03-fullscreen-attempt",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/03-fullscreen-attempt.png",
+      "ui": {
+        "tick": 194,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 1718.5. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "48.7 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 194,
+        "sim_time": "00:30",
+        "day_phase": 0.020833333333333332,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.7,
+            "soc_percent": 70,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 46.73546603517739,
+            "critical_kw": 18.694186414070955,
+            "served_kw": 0,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 48.71159261920048,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 47.09275904263608,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 46.73546603517739,
+          "cond": 1718.5308475860575,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "pass": true
+  },
+  "networkThrottle": {
+    "capture": {
+      "name": "04-network-throttle",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/04-network-throttle.png",
+      "ui": {
+        "tick": 207,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 2060.5. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "41.9 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 207,
+        "sim_time": "03:45",
+        "day_phase": 0.15625,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.7,
+            "soc_percent": 70,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 41.94984194451139,
+            "critical_kw": 16.779936777804558,
+            "served_kw": 0,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 41.87358500736759,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 37.935670014109796,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 41.94984194451139,
+          "cond": 2060.4890845814302,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "pass": true
+  },
+  "soak": {
+    "samples": [
+      {
+        "elapsedSec": 1,
+        "uiTick": 208,
+        "frameTick": 208,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 51.91,
+          "nodes": 1364,
+          "documents": 1,
+          "fps": 43
+        }
+      },
+      {
+        "elapsedSec": 32,
+        "uiTick": 239,
+        "frameTick": 239,
+        "mode": "CRITICAL",
+        "perf": {
+          "jsHeapUsedMB": 44.72,
+          "nodes": 1182,
+          "documents": 1,
+          "fps": 41
+        }
+      },
+      {
+        "elapsedSec": 63,
+        "uiTick": 270,
+        "frameTick": 270,
+        "mode": "CRITICAL",
+        "perf": {
+          "jsHeapUsedMB": 80.01,
+          "nodes": 1656,
+          "documents": 1,
+          "fps": 39
+        }
+      },
+      {
+        "elapsedSec": 94,
+        "uiTick": 301,
+        "frameTick": 301,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 40.92,
+          "nodes": 528,
+          "documents": 1,
+          "fps": 41
+        }
+      },
+      {
+        "elapsedSec": 126,
+        "uiTick": 332,
+        "frameTick": 332,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 79.43,
+          "nodes": 2382,
+          "documents": 1,
+          "fps": 36
+        }
+      },
+      {
+        "elapsedSec": 157,
+        "uiTick": 363,
+        "frameTick": 363,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 43.61,
+          "nodes": 960,
+          "documents": 1,
+          "fps": 42
+        }
+      },
+      {
+        "elapsedSec": 188,
+        "uiTick": 394,
+        "frameTick": 394,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 77.24,
+          "nodes": 2064,
+          "documents": 1,
+          "fps": 35
+        }
+      },
+      {
+        "elapsedSec": 219,
+        "uiTick": 425,
+        "frameTick": 425,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 119.24,
+          "nodes": 3936,
+          "documents": 1,
+          "fps": 34
+        }
+      },
+      {
+        "elapsedSec": 250,
+        "uiTick": 456,
+        "frameTick": 456,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 60.96,
+          "nodes": 954,
+          "documents": 1,
+          "fps": 39
+        }
+      },
+      {
+        "elapsedSec": 282,
+        "uiTick": 487,
+        "frameTick": 487,
+        "mode": "NORMAL",
+        "perf": {
+          "jsHeapUsedMB": 73.13,
+          "nodes": 2694,
+          "documents": 1,
+          "fps": 36
+        }
+      }
+    ],
+    "capture": {
+      "name": "05-soak-end",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/05-soak-end.png",
+      "ui": {
+        "tick": 518,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 47284.5. Live stream ws://localhost:8765",
+        "feeder": "25.7 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "65.8 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 518,
+        "sim_time": "09:30",
+        "day_phase": 0.3958333333333333,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 60.14708548718441,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.7,
+            "soc_percent": 70,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 106.7777890180291,
+            "critical_kw": 42.71111560721164,
+            "served_kw": 20.705356858980515,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": 0.02,
+          "flows": [
+            {
+              "from": "PV_01",
+              "to": "LOAD_CAMPUS",
+              "kw": 25.715276779623046,
+              "curtailed_kw": 0
+            }
+          ],
+          "unmet_kw": 65.83181594060102,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 25.715276779623046
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 107.11259161192852,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 106.7777890180291,
+          "cond": 47284.45663484587,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "pass": false
+  },
+  "idleThenInteract": {
+    "capture": {
+      "name": "06-idle-then-kill",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/06-idle-then-kill.png",
+      "ui": {
+        "tick": 588,
+        "mode": "CRITICAL",
+        "banner": "CRITICAL: PV_01 offline; battery grid_forming; 25.4 kW shed",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 91829.3. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "33.3 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 588,
+        "sim_time": "03:00",
+        "day_phase": 0.125,
+        "mode": "CRITICAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": false,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.5173663715971701,
+            "soc_percent": 51.7,
+            "flow_kw": 18.179301634009803,
+            "max_discharge_kw": 50,
+            "mode": "grid_forming",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 42.28102725539848,
+            "critical_kw": 16.91241090215939,
+            "served_kw": 16.91241090215939,
+            "shed_kw": 25.368616353239087,
+            "health": "degraded"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 33.31197769433735,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 42.8496642820116,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 42.28102725539848,
+          "cond": 91829.32756535859,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "beforeIdle": {
+      "tick": 519,
+      "mode": "NORMAL",
+      "banner": "NORMAL: Market and physical constraints are steady",
+      "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 48632.7. Live stream ws://localhost:8765",
+      "feeder": "30.6 kW live flow",
+      "curtailed": "0.0 kW",
+      "unmet": "61.6 kW",
+      "canvas": {
+        "width": 1050,
+        "height": 829,
+        "visible": true
+      },
+      "lowPowerChecked": true
+    },
+    "afterIdle": {
+      "tick": 572,
+      "mode": "NORMAL",
+      "banner": "NORMAL: Market and physical constraints are steady",
+      "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 70411.8. Live stream ws://localhost:8765",
+      "feeder": "0.0 kW live flow",
+      "curtailed": "0.0 kW",
+      "unmet": "72.9 kW",
+      "canvas": {
+        "width": 1050,
+        "height": 829,
+        "visible": true
+      },
+      "lowPowerChecked": true
+    },
+    "pass": true
+  },
+  "highLowSoc": {
+    "highReady": true,
+    "floorReady": true,
+    "highBefore": {
+      "name": "07-high-soc-before-kill",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/07-high-soc-before-kill.png",
+      "ui": {
+        "tick": 645,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 145509.1. Live stream ws://localhost:8765",
+        "feeder": "52.6 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "40.7 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 645,
+        "sim_time": "17:15",
+        "day_phase": 0.71875,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 20.704716876899916,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.9538228137127422,
+            "soc_percent": 95.4,
+            "flow_kw": -22.36001344453703,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": 0.027325536080930832,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 87.75204502831693,
+            "critical_kw": 35.10081801132677,
+            "served_kw": 31.353950399179965,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": 0.02,
+          "flows": [
+            {
+              "from": "PV_01",
+              "to": "LOAD_CAMPUS",
+              "kw": 43.2815571969029,
+              "curtailed_kw": 0
+            },
+            {
+              "from": "PV_01",
+              "to": "BESS_01",
+              "kw": 9.302522803097098,
+              "curtailed_kw": 0
+            }
+          ],
+          "unmet_kw": 40.6974771969029,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 52.58408
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 86.692413302051,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 87.75204502831693,
+          "cond": 145509.06096242784,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "highCrit": {
+      "name": "08-high-soc-critical",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/08-high-soc-critical.png",
+      "ui": {
+        "tick": 661,
+        "mode": "CRITICAL",
+        "banner": "CRITICAL: PV_01 offline; battery grid_forming; 38.1 kW shed",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 184736.7. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "115.2 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 661,
+        "sim_time": "21:15",
+        "day_phase": 0.8854166666666666,
+        "mode": "CRITICAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 5.23207257367762,
+            "alive": false,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.5670437185603274,
+            "soc_percent": 56.7,
+            "flow_kw": 27.010381578537746,
+            "max_discharge_kw": 50,
+            "mode": "grid_forming",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 63.51810510421138,
+            "critical_kw": 25.407242041684555,
+            "served_kw": 25.407242041684555,
+            "shed_kw": 38.110863062526825,
+            "health": "degraded"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 115.17338944910163,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 62.84525269069735,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 63.51810510421138,
+          "cond": 184736.71666329718,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "lowFloor": {
+      "name": "09-low-soc-floor-critical",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/09-low-soc-floor-critical.png",
+      "ui": {
+        "tick": 668,
+        "mode": "CRITICAL",
+        "banner": "CRITICAL: PV_01 offline; battery grid_forming; 25.1 kW shed",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 185792.6. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "28.8 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 668,
+        "sim_time": "23:00",
+        "day_phase": 0.9583333333333334,
+        "mode": "CRITICAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 5.23207257367762,
+            "alive": false,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.2,
+            "soc_percent": 20,
+            "flow_kw": 16.83799799424642,
+            "max_discharge_kw": 50,
+            "mode": "grid_forming",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 1.8135530506615467,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 41.806201116299526,
+            "critical_kw": 16.72248044651981,
+            "served_kw": 16.72248044651981,
+            "shed_kw": 25.083720669779716,
+            "health": "degraded"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 27.010381578537746,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 41.771948274826855,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 41.806201116299526,
+          "cond": 185792.6274767497,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "lowBefore": {
+      "name": "10-low-soc-before-kill",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/10-low-soc-before-kill.png",
+      "ui": {
+        "tick": 683,
+        "mode": "NORMAL",
+        "banner": "NORMAL: Market and physical constraints are steady",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 235733.5. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "15.8 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 683,
+        "sim_time": "02:45",
+        "day_phase": 0.11458333333333333,
+        "mode": "NORMAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": true,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.2,
+            "soc_percent": 20,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "market",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 0,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 49.18618184910917,
+            "critical_kw": 19.67447273964367,
+            "served_kw": 0,
+            "shed_kw": 0,
+            "health": "nominal"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 15.7816267816923,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 47.322708736404394,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 49.18618184910917,
+          "cond": 235733.4934988031,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "lowCrit": {
+      "name": "11-low-soc-critical",
+      "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/11-low-soc-critical.png",
+      "ui": {
+        "tick": 701,
+        "mode": "CRITICAL",
+        "banner": "CRITICAL: PV_01 offline; battery grid_forming; 74.3 kW shed",
+        "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 275436.0. Live stream ws://localhost:8765",
+        "feeder": "0.0 kW live flow",
+        "curtailed": "0.0 kW",
+        "unmet": "119.3 kW",
+        "canvas": {
+          "width": 1050,
+          "height": 829,
+          "visible": true
+        },
+        "lowPowerChecked": true
+      },
+      "frame": {
+        "schema_version": 1,
+        "tick": 701,
+        "sim_time": "07:15",
+        "day_phase": 0.3020833333333333,
+        "mode": "CRITICAL",
+        "nodes": {
+          "PV_01": {
+            "type": "solar",
+            "output_kw": 0,
+            "alive": false,
+            "health": "nominal"
+          },
+          "BESS_01": {
+            "type": "battery",
+            "soc": 0.2,
+            "soc_percent": 20,
+            "flow_kw": 0,
+            "max_discharge_kw": 50,
+            "mode": "grid_forming",
+            "ask_price_usd_kwh": null,
+            "unmet_kw": 28.86332581945899,
+            "health": "nominal"
+          },
+          "LOAD_CAMPUS": {
+            "type": "load",
+            "demand_kw": 74.28555510276973,
+            "critical_kw": 29.714222041107895,
+            "served_kw": 0,
+            "shed_kw": 74.28555510276973,
+            "health": "degraded"
+          }
+        },
+        "market": {
+          "clearing_price_usd_kwh": null,
+          "flows": [],
+          "unmet_kw": 90.48485161943881,
+          "surplus_kw": 0,
+          "curtailed_kw": 0,
+          "per_line_flow_kw": {
+            "FEEDER_1": 0
+          }
+        },
+        "forecast": {
+          "predicted_demand_kw": 74.69674173698644,
+          "horizon_ticks": 5,
+          "actual_demand_kw": 74.28555510276973,
+          "cond": 275436.0062592686,
+          "reanchor_count": 0,
+          "warm": true
+        },
+        "alerts": []
+      }
+    },
+    "pass": true
+  },
+  "consoleEntries": [
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "time": "2026-06-22T02:02:02.680Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "time": "2026-06-22T02:02:03.307Z"
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "time": "2026-06-22T02:02:03.749Z"
+    },
+    {
+      "type": "warning",
+      "text": "WebSocket connection to 'ws://localhost:8765/' failed: WebSocket is closed before the connection is established.",
+      "time": "2026-06-22T02:02:04.494Z"
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "time": "2026-06-22T02:02:06.536Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "time": "2026-06-22T02:02:07.064Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 8 format 2",
+      "time": "2026-06-22T02:02:07.965Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 5 format 1",
+      "time": "2026-06-22T02:02:07.970Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 2",
+      "time": "2026-06-22T02:02:07.970Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 1",
+      "time": "2026-06-22T02:02:07.971Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 8 format 2",
+      "time": "2026-06-22T02:02:08.455Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 5 format 1",
+      "time": "2026-06-22T02:02:08.455Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 2",
+      "time": "2026-06-22T02:02:08.455Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 1",
+      "time": "2026-06-22T02:02:08.455Z"
+    },
+    {
+      "type": "log",
+      "text": "[vite] server connection lost. Polling for restart...",
+      "time": "2026-06-22T02:08:20.190Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "time": "2026-06-22T02:08:21.155Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "time": "2026-06-22T02:08:21.157Z"
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "time": "2026-06-22T02:08:21.158Z"
+    },
+    {
+      "type": "warning",
+      "text": "WebSocket connection to 'ws://localhost:8765/' failed: WebSocket is closed before the connection is established.",
+      "time": "2026-06-22T02:08:22.238Z"
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "time": "2026-06-22T02:08:23.279Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 8 format 2",
+      "time": "2026-06-22T02:08:23.593Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 5 format 1",
+      "time": "2026-06-22T02:08:23.596Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 2",
+      "time": "2026-06-22T02:08:23.600Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 1",
+      "time": "2026-06-22T02:08:23.600Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 8 format 2",
+      "time": "2026-06-22T02:08:23.699Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GPOS table LookupType 5 format 1",
+      "time": "2026-06-22T02:08:23.699Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 2",
+      "time": "2026-06-22T02:08:23.699Z"
+    },
+    {
+      "type": "debug",
+      "text": "unsupported GSUB table LookupType 6 format 1",
+      "time": "2026-06-22T02:08:23.700Z"
+    }
+  ],
+  "initial": {
+    "name": "00-initial",
+    "shot": "/Users/meetbhadra/Projects/microgrid/vault/Screenshots/2026-06-21-remaining-verification/00-initial.png",
+    "ui": {
+      "tick": 182,
+      "mode": "NORMAL",
+      "banner": "NORMAL: Market and physical constraints are steady",
+      "streamLine": "Stream: live / ws://localhost:8765. Ridge condition: 1539.9. Live stream ws://localhost:8765",
+      "feeder": "0.0 kW live flow",
+      "curtailed": "0.0 kW",
+      "unmet": "111.1 kW",
+      "canvas": {
+        "width": 890,
+        "height": 819,
+        "visible": true
+      },
+      "lowPowerChecked": true
+    },
+    "frame": {
+      "schema_version": 1,
+      "tick": 182,
+      "sim_time": "21:30",
+      "day_phase": 0.8958333333333334,
+      "mode": "NORMAL",
+      "nodes": {
+        "PV_01": {
+          "type": "solar",
+          "output_kw": 0,
+          "alive": true,
+          "health": "nominal"
+        },
+        "BESS_01": {
+          "type": "battery",
+          "soc": 0.7,
+          "soc_percent": 70,
+          "flow_kw": 0,
+          "max_discharge_kw": 50,
+          "mode": "market",
+          "ask_price_usd_kwh": null,
+          "unmet_kw": 0,
+          "health": "nominal"
+        },
+        "LOAD_CAMPUS": {
+          "type": "load",
+          "demand_kw": 66.51941120611887,
+          "critical_kw": 26.60776448244755,
+          "served_kw": 0,
+          "shed_kw": 0,
+          "health": "nominal"
+        }
+      },
+      "market": {
+        "clearing_price_usd_kwh": null,
+        "flows": [],
+        "unmet_kw": 111.14426690937275,
+        "surplus_kw": 0,
+        "curtailed_kw": 0,
+        "per_line_flow_kw": {
+          "FEEDER_1": 0
+        }
+      },
+      "forecast": {
+        "predicted_demand_kw": 66.93712483978761,
+        "horizon_ticks": 5,
+        "actual_demand_kw": 66.51941120611887,
+        "cond": 1539.9105967849757,
+        "reanchor_count": 0,
+        "warm": true
+      },
+      "alerts": []
+    }
+  },
+  "finishedAt": "2026-06-22T02:11:37.533Z",
+  "consoleSummary": {
+    "errors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "time": "2026-06-22T02:02:07.064Z"
+      }
+    ],
+    "warnings": [
+      {
+        "type": "warning",
+        "text": "WebSocket connection to 'ws://localhost:8765/' failed: WebSocket is closed before the connection is established.",
+        "time": "2026-06-22T02:02:04.494Z"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "time": "2026-06-22T02:02:06.536Z"
+      },
+      {
+        "type": "warning",
+        "text": "WebSocket connection to 'ws://localhost:8765/' failed: WebSocket is closed before the connection is established.",
+        "time": "2026-06-22T02:08:22.238Z"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "time": "2026-06-22T02:08:23.279Z"
+      }
+    ]
+  }
+}

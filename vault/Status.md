@@ -2,6 +2,24 @@
 
 _Claude updates this after each build step. Human reads it first._
 
+## Follow-up verification round + broker fix — 2026-06-21 (Claude)
+Drove the 7 items the first browser audit left open. **6 PASS, 1 fix landed, 1 tooling-limited.**
+- **FIXED [was a crash]:** dropping Mosquitto previously killed the whole backend
+  (unhandled `MqttError`). Added bounded-backoff broker reconnect to `BaseAgent.run`,
+  `Clock.run`, `WebSocketServer.run` + guarded the chaos relay. Backend now survives a
+  broker outage and resumes (monotonic tick, no NaN). Verified: 46 pytest + 5 gates +
+  live drop→recover.
+- **Ridge re-anchor CONFIRMED** properly: live `forecast.reanchor_count` increments only
+  via the watchdog; controlled real-sim harness fired it at cond>cond_max (cond→1.0,
+  count++, logged). (Corrects the earlier "cond 37M→346" note below — that drop was a
+  backend restart, not a verified watchdog event; cond 37M < 1e8 threshold.)
+- **90% vs 25% SoC:** 7 GF ticks/~23 kWh vs 1 tick/~2 kWh, both stop at 0.20 floor — real.
+- **Soak (5 min):** no memory leak (GC sawtooth ~48–105 MB); FPS median 38, no freezes.
+- **Resize:** clean 699/1280/1400; narrow <~880px overflows (canvas min-width, frontend).
+- **Idle 94s backgrounded:** WS stayed live (+93 ticks); post-idle Kill worked.
+- **Network throttle:** not drivable with available tools (no CDP); recipe in vault.
+Full detail: `Decisions/2026-06-21-e2e-browser-demo-audit.md` (§0).
+
 ## Codex E2E Browser Acceptance Test — 2026-06-21: **PASS-WITH-CAVEATS**
 Codex operated the real local stack in Meet's Chrome and cross-checked rendered
 values against live WebSocket frames. Core Kill-Solar demo passed end to end:
@@ -18,15 +36,11 @@ self-heal arc observed live end-to-end with scene + numbers moving together
 (CRITICAL → shed → grid-forming → SoC floor → honest unmet → ALL_CLEAR → market).
 Ridge re-anchor fired live (cond 37M→346); battery floor + honest unmet confirmed.
 Full report: `Decisions/2026-06-21-e2e-browser-demo-audit.md`.
-**Demo-polish defects to fix:**
-- D1 [HIGH] alert-banner TEXT stays "NORMAL…" during CRITICAL (alerts[] is a 1-tick
-  transient; banner should read `frame.mode`).
-- D2 [MED] rapid Kill clicks drop the command (single clicks fine).
-- D3 [MED] browser Kill/Restore lands ~15-18 ticks slower than a direct WS client
-  (frontend send delay; backend chaos handling is fast).
-- D4 [MED] no WS auto-reconnect — after a backend hiccup the dashboard is stuck on
-  "Waiting for the first telemetry frame…" until manual reload (`stream.ts` has no
-  retry). Honest (not a zombie), but no recovery.
+**Original demo-polish defects:** D1/D2/D3/D4 were later fixed by Codex in
+`9582cf8 fix browser e2e frontend caveats`. Current `frontend/src/App.tsx` drives
+the CRITICAL banner from `frame.mode`, and `frontend/src/stream.ts` has reconnect
+and queued command handling. Claude's follow-up note about D1 still being unfixed
+was stale relative to the current frontend.
 
 ## v1 Verification Audit — 2026-06-21: **DONE-WITH-CAVEATS**
 Full slice runs live (real broker + WS); self-heal arc proven through the real

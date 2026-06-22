@@ -5,10 +5,21 @@ Subclasses override `subscriptions()` and the `on_*` hooks. Every agent is a pla
 """
 from __future__ import annotations
 
+import asyncio
+import logging
+
+import aiomqtt
+
 from ..bus import Bus, Message
 
 TOPIC_TICK = "grid/tick"
 TOPIC_ALERT = "grid/alert"
+
+log = logging.getLogger("sim.agent")
+
+# Bounded backoff between broker-reconnect attempts (seconds).
+_RECONNECT_BACKOFF_S = 1.0
+_RECONNECT_MAX_S = 10.0
 
 
 class BaseAgent:
@@ -21,11 +32,29 @@ class BaseAgent:
         return [TOPIC_TICK]
 
     async def run(self) -> None:
-        async with self.bus:
-            await self.bus.subscribe(*self.subscriptions())
-            await self.on_start()
-            async for msg in self.bus.messages():
-                await self.on_message(msg)
+        """Run forever, surviving broker drops.
+
+        On `MqttError` (broker disconnect/refused) the loop reconnects with bounded
+        backoff and re-subscribes — a broker hiccup stalls this agent but never kills
+        the process. `CancelledError` (clean shutdown) is *not* caught, so task
+        cancellation still works. `FakeBus` never raises `MqttError`, so unit tests
+        run the body exactly once, unchanged.
+        """
+        backoff = _RECONNECT_BACKOFF_S
+        while True:
+            try:
+                async with self.bus:
+                    await self.bus.subscribe(*self.subscriptions())
+                    await self.on_start()
+                    backoff = _RECONNECT_BACKOFF_S  # connected cleanly; reset backoff
+                    async for msg in self.bus.messages():
+                        await self.on_message(msg)
+                return  # message stream ended normally → done
+            except aiomqtt.MqttError as exc:
+                log.warning("%s lost broker (%s); reconnecting in %.1fs",
+                            self.node_id, exc, backoff)
+                await asyncio.sleep(backoff)
+                backoff = min(backoff * 2, _RECONNECT_MAX_S)
 
     async def on_start(self) -> None:
         """Optional one-time setup after subscribing."""

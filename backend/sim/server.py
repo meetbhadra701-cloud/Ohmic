@@ -16,6 +16,7 @@ import asyncio
 import json
 import logging
 
+import aiomqtt
 import websockets
 import websockets.exceptions
 
@@ -61,15 +62,32 @@ class WebSocketServer:
     # ------------------------------------------------------------------ public
 
     async def run(self) -> None:
-        """Main coroutine: open MQTT connection and start WS listener."""
-        async with self._bus:
-            await self._bus.subscribe(*_MQTT_SUBS_QOS0, qos=0)
-            await self._bus.subscribe(*_MQTT_SUBS_QOS1, qos=1)
+        """Main coroutine: keep the WS listener bound while surviving broker drops.
+
+        The `websockets.serve` context is the *outer* scope, so connected browser
+        clients stay connected across a broker outage (they simply receive no new
+        frames until MQTT resumes). The inner loop reconnects MQTT with bounded
+        backoff on `MqttError` and re-subscribes. `CancelledError` propagates for
+        clean shutdown.
+        """
+        async with websockets.serve(self._ws_handler, self._ws_host, self._ws_port):
             log.info("WebSocket server listening on ws://%s:%s",
                      self._ws_host, self._ws_port)
-            async with websockets.serve(self._ws_handler, self._ws_host, self._ws_port):
-                async for msg in self._bus.messages():
-                    await self._on_mqtt(msg)
+            backoff = 1.0
+            while True:
+                try:
+                    async with self._bus:
+                        await self._bus.subscribe(*_MQTT_SUBS_QOS0, qos=0)
+                        await self._bus.subscribe(*_MQTT_SUBS_QOS1, qos=1)
+                        backoff = 1.0
+                        async for msg in self._bus.messages():
+                            await self._on_mqtt(msg)
+                    return  # MQTT stream ended normally → done
+                except aiomqtt.MqttError as exc:
+                    log.warning("WS server lost broker (%s); reconnecting in %.1fs",
+                                exc, backoff)
+                    await asyncio.sleep(backoff)
+                    backoff = min(backoff * 2, 10.0)
 
     # ------------------------------------------------------------------ MQTT
 
@@ -232,8 +250,12 @@ class WebSocketServer:
         if target not in CHAOS_TARGETS or action not in KNOWN_ACTIONS:
             log.warning("Ignored invalid chaos command: %r", cmd)
             return
-        await self._bus.publish(
-            "chaos/command",
-            {"tick": self._tick_payload.get("tick", 0), "target": target, "action": action},
-            qos=1,
-        )
+        try:
+            await self._bus.publish(
+                "chaos/command",
+                {"tick": self._tick_payload.get("tick", 0), "target": target, "action": action},
+                qos=1,
+            )
+        except (aiomqtt.MqttError, AssertionError) as exc:
+            # Broker is mid-reconnect; drop the command rather than killing the handler.
+            log.warning("Chaos command dropped (broker unavailable): %s", exc)
