@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "tick": 85,
+  "sim_time": "21:15",
+  "day_phase": 0.8854166666666666,
+  "mode": "NORMAL",
+  "nodes": {
+    "PV_01": {
+      "type": "solar",
+      "output_kw": 0.0,
+      "alive": true,
+      "health": "nominal"
+    },
+    "BESS_01": {
+      "type": "battery",
+      "soc": 0.7,
+      "soc_percent": 70.0,
+      "flow_kw": 0,
+      "max_discharge_kw": 50.0,
+      "mode": "market",
+      "ask_price_usd_kwh": null,
+      "unmet_kw": 0.0,
+      "health": "nominal"
+    },
+    "LOAD_CAMPUS": {
+      "type": "load",
+      "demand_kw": 61.701249437591585,
+      "critical_kw": 24.680499775036637,
+      "served_kw": 0,
+      "shed_kw": 0.0,
+      "health": "nominal"
+    }
+  },
+  "market": {
+    "clearing_price_usd_kwh": null,
+    "flows": [],
+    "unmet_kw": 120.57673044422812,
+    "surplus_kw": 0,
+    "curtailed_kw": 0.0,
+    "per_line_flow_kw": {
+      "FEEDER_1": 0.0
+    }
+  },
+  "forecast": {
+    "predicted_demand_kw": 66.07515326401672,
+    "horizon_ticks": 5,
+    "actual_demand_kw": 61.701249437591585,
+    "cond": 651.9601008563299,
+    "reanchor_count": 0,
+    "warm": true
+  },
+  "alerts": []
+}

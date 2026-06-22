@@ -2,6 +2,14 @@
 
 _Claude updates this after each build step. Human reads it first._
 
+## Codex E2E Browser Acceptance Test — 2026-06-21: **PASS-WITH-CAVEATS**
+Codex operated the real local stack in Meet's Chrome and cross-checked rendered
+values against live WebSocket frames. Core Kill-Solar demo passed end to end:
+NORMAL -> CRITICAL -> PV offline -> BESS grid-forming -> load shed -> SoC floor
+with honest unmet -> Restore -> NORMAL. Evidence report:
+`Decisions/2026-06-21-e2e-browser-demo-audit-codex.md`; screenshots and WS logs:
+`Screenshots/2026-06-21-e2e/`.
+
 ## v1 E2E Browser Demo verdict — 2026-06-21: **PASS-WITH-CAVEATS**
 Operated the real running system in a real browser (Claude in Chrome). **3D scene
 renders correctly — the prior "pixels unverified" unknown is now RESOLVED.** Rendered
