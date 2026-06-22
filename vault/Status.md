@@ -14,7 +14,10 @@ Drove the 7 items the first browser audit left open. **6 PASS, 1 fix landed, 1 t
   count++, logged). (Corrects the earlier "cond 37M→346" note below — that drop was a
   backend restart, not a verified watchdog event; cond 37M < 1e8 threshold.)
 - **90% vs 25% SoC:** 7 GF ticks/~23 kWh vs 1 tick/~2 kWh, both stop at 0.20 floor — real.
-- **Soak (5 min):** no memory leak (GC sawtooth ~48–105 MB); FPS median 38, no freezes.
+- **Soak (~5 min):** ticks advanced 208→487, heap stayed bounded (51.9→73.1 MB,
+  sawtooth in Claude's manual sampling), FPS stayed usable (43→36). **Note:** the
+  automated JSON marked soak false because Chrome logged one 404 resource error;
+  no freeze or memory leak was observed.
 - **Resize:** clean 699/1280/1400; narrow <~880px overflows (canvas min-width, frontend).
 - **Idle 94s backgrounded:** WS stayed live (+93 ticks); post-idle Kill worked.
 - **Network throttle:** not drivable with available tools (no CDP); recipe in vault.
